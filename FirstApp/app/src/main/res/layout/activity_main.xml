@@ -30,8 +30,8 @@
         android:id="@+id/PushMeButton"
         android:layout_width="131dp"
         android:layout_height="78dp"
-
         android:text="Push me"
+        android:onClick="onBtnPushMe"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.228"
@@ -43,7 +43,8 @@
         android:id="@+id/HelloButton"
         android:layout_width="132dp"
         android:layout_height="76dp"
-        android:text="Button"
+        android:text="Hello"
+        android:onClick="onBtnHello"
         app:layout_constraintBottom_toTopOf="@+id/sNumTextView"
 
         app:layout_constraintEnd_toEndOf="parent"

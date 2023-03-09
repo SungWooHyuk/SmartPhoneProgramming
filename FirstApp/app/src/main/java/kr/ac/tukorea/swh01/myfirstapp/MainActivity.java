@@ -13,32 +13,16 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Button btn = findViewById(R.id.PushMeButton);
-        btn.setOnClickListener(pushMeButtonListener);
-
-//        btn.setOnClickListener(new View.OnClickListener() { // 즉석에서 객체 하나 만들어서 던져줌
-//            @Override
-//            public void onClick(View view) {
-//                TextView tv = findViewById(R.id.sNumTextView);
-//                tv.setText("PushMe");
-//            }
-//        });
-        btn = findViewById(R.id.HelloButton);
-        btn.setOnClickListener(new View.OnClickListener() { // 즉석에서 객체 하나 만들어서 던져줌
-            @Override
-            public void onClick(View view) {
-                TextView tv = findViewById(R.id.sNumTextView);
-                tv.setText("Hello");
-            }
-        });
     }
     // 바깥에 만들면 멤버변수
-    View.OnClickListener pushMeButtonListener = new View.OnClickListener() { // 즉석에서 객체 하나 만들어서 던져줌
-        @Override
-        public void onClick(View view) {
-            TextView tv = findViewById(R.id.sNumTextView);
-            tv.setText("PushMe");
-        }
-    };
+    public void onBtnPushMe(View view) {
+        TextView tv = findViewById(R.id.sNumTextView);
+        tv.setText("PushMe");
+    }
+
+    public void onBtnHello(View view) {
+        TextView tv = findViewById(R.id.sNumTextView);
+        tv.setText("Hello");
+    }
+
 }
