@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/sNumTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
@@ -23,6 +24,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/PushMeButton" />
+
+    <Button
+        android:id="@+id/PushMeButton"
+        android:layout_width="131dp"
+        android:layout_height="78dp"
+        android:text="Push me"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.217" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
