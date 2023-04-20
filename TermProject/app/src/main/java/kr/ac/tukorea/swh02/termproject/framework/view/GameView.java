@@ -10,9 +10,9 @@ import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.View;
 
-import kr.ac.tukorea.ge.spgp2023.dragonflight.BuildConfig;
+import kr.ac.tukorea.swh02.termproject.BuildConfig;
 import kr.ac.tukorea.swh02.termproject.framework.scene.BaseScene;
-
+import kr.ac.tukorea.swh02.termproject.framework.scene.BaseScene;
 /**
  * TODO: document your custom view class.
  */

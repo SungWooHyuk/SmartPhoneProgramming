@@ -9,10 +9,11 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
-import kr.ac.tukorea.ge.spgp2023.dragonflight.BuildConfig;
+import kr.ac.tukorea.swh02.termproject.BuildConfig;
 import kr.ac.tukorea.swh02.termproject.framework.interfaces.IBoxCollidable;
 import kr.ac.tukorea.swh02.termproject.framework.interfaces.IGameObject;
 import kr.ac.tukorea.swh02.termproject.framework.interfaces.IRecyclable;
+import kr.ac.tukorea.swh02.termproject.framework.interfaces.ITouchable;
 
 public class BaseScene {
     private static ArrayList<BaseScene> stack = new ArrayList<>();
@@ -134,7 +135,21 @@ public class BaseScene {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
+        int touchLayer = getTouchLayerIndex();
+        if (touchLayer < 0) return false;
+        ArrayList<IGameObject> gameObjects = layers.get(touchLayer);
+        for (IGameObject gobj : gameObjects) {
+            if (!(gobj instanceof ITouchable)) {
+                continue;
+            }
+            boolean processed = ((ITouchable) gobj).onTouchEvent(event);
+            if (processed) return true;
+        }
         return false;
+    }
+
+    protected int getTouchLayerIndex() {
+        return -1;
     }
 
     public boolean clipsRect() {

@@ -12,7 +12,7 @@
         android:theme="@style/Theme.TermProject"
         tools:targetApi="31">
         <activity
-            android:name=".JumpsTop.MainActivity"
+            android:name=".JumpsTop.app.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
