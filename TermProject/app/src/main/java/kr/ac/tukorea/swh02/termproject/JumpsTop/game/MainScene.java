@@ -19,7 +19,7 @@ public class MainScene extends BaseScene {
         bg, platform, item, obstacle, player, ui, touch, controller, COUNT
     }
     public MainScene() {
-        Metrics.setGameSize(20.0f, 35.0f);
+        Metrics.setGameSize(20.0f, 30.0f);
         initLayers(Layer.COUNT);
 
         add(Layer.bg, new VertScrollBackground(R.mipmap.background, -1.f));

@@ -17,6 +17,6 @@ import kr.ac.tukorea.swh02.termproject.framework.view.Metrics;
 public class Player extends AnimSprite {
 
     public Player() {
-        super(R.mipmap.player_sheet, 2.0f, 10.f, 3.86f, 10.f, 8, 4); // display the first image in the sprite sheet
+        super(R.mipmap.jumpstopplayering, 10.0f, 25.f, 2.4f, 2.8f, 8, 1); // display the first image in the sprite sheet
     }
 }

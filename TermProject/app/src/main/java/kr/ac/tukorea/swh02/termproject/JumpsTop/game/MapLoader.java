@@ -22,30 +22,30 @@ public class MapLoader implements IGameObject {
             scene.add(MainScene.Layer.platform, platform);
             platformX += platform.getWidth();
         }
-        itemX -= MapObject.SPEED * BaseScene.frameTime;
-        while (itemX < Metrics.game_width) {
-            int y = random.nextInt(6) + 1;
-            int count = 3;
-            if (y < 5) {
-                Platform platform = Platform.get(Platform.Type.T_3x1, itemX, y+1);
-                scene.add(MainScene.Layer.platform, platform);
-            } else {
-                count = random.nextInt(5) + 1;
-            }
-            if (y <= 3) {
-                int index = random.nextInt(Obstacle.COUNT);
-                int oy = 6;
-                if (index == 3) oy--;
-                Obstacle obstacle = Obstacle.get(index, itemX, oy);
-                scene.add(MainScene.Layer.obstacle, obstacle);
-            }
-            for (int i = 0; i < count; i++) {
-                int y2 = y -= random.nextInt(2);
-                JellyItem jellyItem = JellyItem.get(JellyItem.getRandomIndex(random), itemX, y2);
-                scene.add(MainScene.Layer.item, jellyItem);
-                itemX += jellyItem.getWidth();
-            }
-        }
+//        itemX -= MapObject.SPEED * BaseScene.frameTime;
+//        while (itemX < Metrics.game_width) {
+//            int y = random.nextInt(6) + 1;
+//            int count = 3;
+//            if (y < 5) {
+//                Platform platform = Platform.get(Platform.Type.GOUND, itemX, y+1);
+//                scene.add(MainScene.Layer.platform, platform);
+//            } else {
+//                count = random.nextInt(5) + 1;
+//            }
+//            if (y <= 3) {
+//                int index = random.nextInt(Obstacle.COUNT);
+//                int oy = 6;
+//                if (index == 3) oy--;
+//                Obstacle obstacle = Obstacle.get(index, itemX, oy);
+//                scene.add(MainScene.Layer.obstacle, obstacle);
+//            }
+//            for (int i = 0; i < count; i++) {
+//                int y2 = y -= random.nextInt(2);
+//                JellyItem jellyItem = JellyItem.get(JellyItem.getRandomIndex(random), itemX, y2);
+//                scene.add(MainScene.Layer.item, jellyItem);
+//                itemX += jellyItem.getWidth();
+//            }
+//        }
     }
 
     @Override
