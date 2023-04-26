@@ -17,11 +17,11 @@ public class MapLoader implements IGameObject {
     public void update() {
         MainScene scene = (MainScene) BaseScene.getTopScene();
         platformX -= MapObject.SPEED * BaseScene.frameTime;
-        while (platformX < Metrics.game_width) {
-            Platform platform = Platform.get(Platform.Type.random(random), platformX, 7);
-            scene.add(MainScene.Layer.platform, platform);
-            platformX += platform.getWidth();
-        }
+//        while (platformX < Metrics.game_width) {
+//            Platform platform = Platform.get(Platform.Type.random(random), platformX, 7);
+//            scene.add(MainScene.Layer.platform, platform);
+//            platformX += platform.getWidth();
+//        }
 //        itemX -= MapObject.SPEED * BaseScene.frameTime;
 //        while (itemX < Metrics.game_width) {
 //            int y = random.nextInt(6) + 1;
