@@ -10,36 +10,42 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class GameView extends View {
-    private Bitmap backGround;
+    private BackGround background;
+    private Ground ground;
+
+    //private Bitmap backgroundimage;
+    //private Bitmap ground;
     private RectF backRect = new RectF();
 
     public GameView(Context context) {
         super(context);
-        init(null, 0);
+        init();
     }
+
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(attrs, 0);
+        init();
     }
-    public GameView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(attrs, defStyle);
+
+    public GameView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
     }
-    private void init(AttributeSet attrs, int defStyle) {
-        Resources res = getResources();
-        backGround = BitmapFactory.decodeResource(res, R.mipmap.background);
+
+    private void init() {
+        // Create instances of the background and scaffold views
+        background = new BackGround(getContext());
+        ground = new Ground(getContext());
     }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // Get the dimensions of the screen
-        int screenWidth = getWidth();
-        int screenHeight = getHeight();
+        // Draw the background and scaffold views
+        background.draw(canvas);
+        ground.draw(canvas);
 
-        // Create a new RectF object that fills the entire screen
-        RectF screenRect = new RectF(0, 0, screenWidth, screenHeight);
-
-        // Draw the background image using the new RectF object
-        canvas.drawBitmap(backGround, null, screenRect, null);
+        // Draw other game objects here...
     }
 }
