@@ -56,15 +56,22 @@ public class Ground extends View {
         // Calculate the left, top, right, and bottom coordinates of the platform
         float centerX = screenWidth / 2f - 170;
         float bottomY = screenHeight * 0.9f;
-        float left = centerX - (groundWidth / 2f) + (centerX * 0.6f);
-        float top = bottomY - groundHeight - (bottomY * 0.2f);
-        float right = left + groundWidth;
-        float bottom = top + 500;
+        x = centerX - (groundWidth / 2.f) + (centerX * 0.6f);
+        y = bottomY - groundHeight - (bottomY * 0.2f);
+        float right = x + groundWidth;
+        float bottom = y + 300;
 
         // Set the coordinates of the destination rectangle for the platform image
-        dstRect.set(left, top, right, bottom);
+        dstRect.set(x, y, right, bottom);
 
         // Draw the ground platform using the destination rectangle
         canvas.drawBitmap(groundImage, null, dstRect, null);
+    }
+    public float getGroundWidth() {
+        return screenWidth;
+    }
+
+    public float getGroundHeight() {
+        return screenHeight;
     }
 }
