@@ -5,10 +5,15 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.Choreographer;
+import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.ArrayList;
 
 public class GameView extends View {
     private BackGround background;
@@ -17,7 +22,8 @@ public class GameView extends View {
     //private Bitmap backgroundimage;
     //private Bitmap ground;
     private RectF backRect = new RectF();
-
+    private RectF jumpBtnRect = new RectF();
+    public static float frameTime;
     public GameView(Context context) {
         super(context);
         init();
@@ -43,6 +49,15 @@ public class GameView extends View {
 
         player = new Player(ground);
 
+        int btnWidth = 100; // Width of jump button
+        int btnHeight = 50; // Height of jump button
+        int btnMargin = 10; // Margin between jump button and edge of screen
+        jumpBtnRect.set(
+                1000, // left
+                1000, // top
+                1000, // right
+                30 // bottom
+        );
     }
     @Override
     protected void onDraw(Canvas canvas) {
@@ -52,6 +67,25 @@ public class GameView extends View {
         ground.draw(canvas);
         player.draw(canvas);
 
+        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        canvas.drawRect(jumpBtnRect, paint);
         // Draw other game objects here...
+    }
+
+    public void update(long elapsedNanos) {
+        frameTime = elapsedNanos / 1_000_000_000f;
+    }
+
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (jumpBtnRect.contains(event.getX(), event.getY())) {
+                    player.jump();
+                }
+                break;
+            // 생략...
+        }
+        return true;
     }
 }
