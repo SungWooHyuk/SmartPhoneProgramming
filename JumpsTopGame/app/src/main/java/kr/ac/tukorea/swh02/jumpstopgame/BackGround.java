@@ -9,46 +9,35 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.Sprite;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
-public class BackGround extends View {
 
-    protected Bitmap backgroundImage;
-    protected RectF dstRect = new RectF();
-    protected float x, y;
-    private int screenWidth, screenHeight;
+public class BackGround extends Sprite {
 
-    public BackGround(Context context) {
-        super(context);
-        init();
+    private final float speed;
+    private final float height;
+    private float scroll;
+    public BackGround(int bitmapResId, float speed) {
+        super(bitmapResId, Metrics.game_width / 2, Metrics.game_height / 2, Metrics.game_width, Metrics.game_height);
+        this.height = bitmap.getHeight() * Metrics.game_width / bitmap.getWidth();
+        setSize(Metrics.game_width, height);
+        this.speed = speed;
     }
-
-    public BackGround(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public BackGround(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    private void init() {
-        // Load the background image from resources
-        Resources res = getResources();
-        backgroundImage = BitmapFactory.decodeResource(res, R.mipmap.background);
-        screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
-        screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+    @Override
+    public void update() {
+        scroll += speed * BaseScene.frameTime;
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        // Draw the background image
-        super.onDraw(canvas);
-
-        // Set the coordinates of the destination rectangle for the background image
-        dstRect.set(0, 0, screenWidth, screenHeight);
-
-        // Draw the background image using the destination rectangle
-        canvas.drawBitmap(backgroundImage, null, dstRect, null);
+    public void draw(Canvas canvas) {
+        float curr = scroll % height;
+        if (curr > 0) curr -= height;
+        while (curr < Metrics.game_height) {
+            dstRect.set(0, curr, Metrics.game_width, curr + height);
+            canvas.drawBitmap(bitmap, null, dstRect, null);
+            curr += height;
+        }
     }
 }

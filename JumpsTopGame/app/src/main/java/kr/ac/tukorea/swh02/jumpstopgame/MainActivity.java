@@ -4,11 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.InGameView;
 
+public class MainActivity extends AppCompatActivity {
+    private InGameView gameView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        gameView = new InGameView(this);
+        gameView.setFullScreen();
+        setContentView(gameView);
+
+        new MainScene().pushScene();
     }
 }
