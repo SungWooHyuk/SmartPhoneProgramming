@@ -16,6 +16,7 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.AnimSprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.Sprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 
+
 public class Player extends AnimSprite{
     private float jumpSpeed;
     private final float ground;
