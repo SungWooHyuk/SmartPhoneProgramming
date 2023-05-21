@@ -1,4 +1,4 @@
-package kr.ac.tukorea.swh02.jumpstopgame;
+package kr.ac.tukorea.swh02.jumpstopgame.game;
 
 import android.content.Context;
 import android.content.res.Resources;

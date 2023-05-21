@@ -1,4 +1,4 @@
-package kr.ac.tukorea.swh02.jumpstopgame;
+package kr.ac.tukorea.swh02.jumpstopgame.game;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 
+import kr.ac.tukorea.swh02.jumpstopgame.R;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.AnimSprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.Sprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
@@ -20,11 +21,12 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 public class Player extends AnimSprite{
     private float jumpSpeed;
     private final float ground;
+    private Ground groundObject;
     private static final float JUMP_POWER = 9.0f;
     private static final float GRAVITY = 17.0f;
 
     public Player() {
-        super(R.mipmap.cookie_player_sheet, 2.0f, 6.0f, 2.0f, 2.0f,8, 1);
+        super(R.mipmap.cookie_player_sheet, 3.0f, 22.0f, 2.0f, 2.0f,8, 1);
         this.ground = y;
     }
     protected enum State {
@@ -59,6 +61,13 @@ public class Player extends AnimSprite{
             }
             y += dy;
             fixDstRect();
+
+        }
+        else if (state == State.idle) {
+            if (groundObject.collidesWith(dstRect)) {
+                // Collision occurred, handle it (e.g., change state to falling)
+                state = State.idle;
+            }
         }
     }
 

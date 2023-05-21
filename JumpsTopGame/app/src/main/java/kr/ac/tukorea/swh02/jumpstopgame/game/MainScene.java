@@ -1,7 +1,8 @@
-package kr.ac.tukorea.swh02.jumpstopgame;
+package kr.ac.tukorea.swh02.jumpstopgame.game;
 
 import android.view.MotionEvent;
 
+import kr.ac.tukorea.swh02.jumpstopgame.R;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
@@ -13,7 +14,7 @@ public class MainScene extends BaseScene {
     }
 
     public MainScene() {
-        Metrics.setGameSize(16.0f, 15.0f);
+        Metrics.setGameSize(18.0f, 32.f);
         initLayers(Layer.COUNT);
 
         add(Layer.bg, new BackGround(R.mipmap.background, 1.0f));

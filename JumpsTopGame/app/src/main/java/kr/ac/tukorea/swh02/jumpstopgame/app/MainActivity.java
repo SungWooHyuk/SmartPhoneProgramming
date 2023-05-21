@@ -1,9 +1,10 @@
-package kr.ac.tukorea.swh02.jumpstopgame;
+package kr.ac.tukorea.swh02.jumpstopgame.app;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import kr.ac.tukorea.swh02.jumpstopgame.game.MainScene;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.InGameView;
 
 public class MainActivity extends AppCompatActivity {

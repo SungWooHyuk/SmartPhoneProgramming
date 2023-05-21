@@ -1,4 +1,4 @@
-package kr.ac.tukorea.swh02.jumpstopgame;
+package kr.ac.tukorea.swh02.jumpstopgame.game;
 
 import android.graphics.Canvas;
 
@@ -6,7 +6,6 @@ import java.util.Random;
 
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IGameObject;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
-import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
 public class MapLoader implements IGameObject {
     private static final String TAG = MapLoader.class.getSimpleName();

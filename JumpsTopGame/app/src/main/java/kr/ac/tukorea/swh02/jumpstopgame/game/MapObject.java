@@ -1,7 +1,6 @@
-package kr.ac.tukorea.swh02.jumpstopgame;
+package kr.ac.tukorea.swh02.jumpstopgame.game;
 
 import android.graphics.RectF;
-import android.util.Log;
 
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IBoxCollidable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IRecyclable;
