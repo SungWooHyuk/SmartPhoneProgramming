@@ -5,7 +5,7 @@ import android.graphics.Paint;
 
 import androidx.core.content.res.ResourcesCompat;
 
-import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.InGameView;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.GameView;
 
 public class Gauge {
     private Paint fgPaint = new Paint();
@@ -14,11 +14,11 @@ public class Gauge {
         bgPaint.setStyle(Paint.Style.STROKE);
         bgPaint.setStrokeWidth(width);
         // Gauge 생성 시점이 GameView.res 가 설정된 이후여야 한다.
-        bgPaint.setColor(ResourcesCompat.getColor(InGameView.res, bgColorResId, null));
+        bgPaint.setColor(ResourcesCompat.getColor(GameView.res, bgColorResId, null));
         bgPaint.setStrokeCap(Paint.Cap.ROUND);
         fgPaint.setStyle(Paint.Style.STROKE);
         fgPaint.setStrokeWidth(width / 2);
-        fgPaint.setColor(ResourcesCompat.getColor(InGameView.res, fgColorResId, null));
+        fgPaint.setColor(ResourcesCompat.getColor(GameView.res, fgColorResId, null));
         fgPaint.setStrokeCap(Paint.Cap.ROUND);
     }
     public void draw(Canvas canvas, float value) {

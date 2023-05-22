@@ -17,4 +17,12 @@ public class Metrics {
     public static float toGameY(float y) {
         return (y - y_offset) / scale;
     }
+
+    public static float getGameWidth() {
+        return game_width;
+    }
+
+    public static float getGameHeight() {
+        return game_height;
+    }
 }

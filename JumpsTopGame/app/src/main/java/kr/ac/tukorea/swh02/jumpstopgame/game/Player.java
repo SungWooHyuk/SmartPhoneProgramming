@@ -1,88 +1,92 @@
 package kr.ac.tukorea.swh02.jumpstopgame.game;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
-
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.RectF;
+import android.util.Log;
 
 import kr.ac.tukorea.swh02.jumpstopgame.R;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IBoxCollidable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.AnimSprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.Sprite;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.res.BitmapPool;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
+public class Player extends Sprite implements IBoxCollidable {
+    private static final float PLAYER_SIZE_RATIO = 0.2f; // 플레이어의 크기 비율
 
-public class Player extends AnimSprite{
-    private float jumpSpeed;
-    private final float ground;
-    private Ground groundObject;
-    private static final float JUMP_POWER = 9.0f;
-    private static final float GRAVITY = 17.0f;
-
-    public Player() {
-        super(R.mipmap.cookie_player_sheet, 3.0f, 22.0f, 2.0f, 2.0f,8, 1);
-        this.ground = y;
-    }
-    protected enum State {
-        idle, jump
-    }
-    protected State state = State.idle;
-    protected static Rect[][] srcRects = {
-            makeRects(100, 101, 102, 103), // State.running
-            makeRects(7, 8),               // State.jump
-            makeRects(1, 2, 3, 4),         // State.doubleJump
-            makeRects(0),                  // State.falling
+    private static final float FIGHTER_Y_OFFSET = 10.2f;
+    private static final float PLAYER_WIDTH = 32 * 0.1f; //1.75f;
+    private static final float PLAYER_HEIGHT = 32 * 0.1f; //1.75f;
+    private static final float SPEED = 10.0f;
+    private static final float FIGHTER_LEFT = PLAYER_WIDTH / 2;
+    private static final float FIGHTER_RIGHT = 9.0f - PLAYER_WIDTH / 2;
+    private static final String TAG = Player.class.getSimpleName();
+    private float tx;
+    private static final Rect[] rects = new Rect[] {
+            new Rect(  0, 0,   0 + 32, 32),
+            new Rect( 32, 0,  32 + 32, 32),
+            new Rect(64, 0, 64 + 32, 32),
+            new Rect(96, 0, 96 + 32, 32),
+            new Rect(128, 0, 128 + 32, 32),
+            new Rect(160, 0, 160 + 32, 32),
+            new Rect(192, 0, 192 + 32, 32),
+            new Rect(224, 0, 224 + 32, 32),
+            new Rect(256, 0, 256 + 32, 32),
+            new Rect(288, 0, 288 + 32, 32),
+            new Rect(320, 0, 320 + 32, 32),
     };
-    protected static Rect[] makeRects(int... indices) {
-        Rect[] rects = new Rect[indices.length];
-        for (int i = 0; i < indices.length; i++) {
-            int idx = indices[i];
-            int l = 72 + (idx % 100) * 272;
-            int t = 132 + (idx / 100) * 272;
-            rects[i] = new Rect(l, t, l + 140, t + 140);
-        }
-        return rects;
+    private RectF collisionRect; // RectF 객체 추가
+    private static final int FRAME_COUNT = 11; // 스프라이트 이미지 프레임 개수
+    private static final int FRAME_WIDTH = 32; // 스프라이트 이미지 프레임의 너비
+    private static final int FRAME_HEIGHT = 32; // 스프라이트 이미지 프레임의 높이
+    private static final float FPS = 10.0f; // 프레임 속도 (프레임/초)
+    private float rollTime;
+    private static final float MAX_ROLL_TIME = 0.4f;
+    public Player() {
+        super(R.mipmap.frog_idle, Metrics.game_width / 2, Metrics.game_height - FIGHTER_Y_OFFSET, PLAYER_WIDTH, PLAYER_HEIGHT);
+        collisionRect = new RectF();
+    }
+    private static float calculatePlayerWidth() {
+        return Metrics.getGameWidth() * PLAYER_SIZE_RATIO;
+    }
+
+    private static float calculatePlayerHeight() {
+        return Metrics.getGameHeight() * PLAYER_SIZE_RATIO;
+    }
+
+    private static float calculatePlayerX() {
+        return Metrics.getGameWidth() / 2 - calculatePlayerWidth() / 2;
+    }
+
+    private static float calculatePlayerY() {
+        return Metrics.getGameHeight() / 2 - calculatePlayerHeight() / 2;
+    }
+    private static Rect calculatePlayerSize() {
+        int playerWidth = (int) (Metrics.getGameWidth() * PLAYER_SIZE_RATIO);
+        int playerHeight = (int) (Metrics.getGameHeight() * PLAYER_SIZE_RATIO);
+        return new Rect(0, 0, playerWidth, playerHeight);
+    }
+
+    @Override
+    public RectF getCollisionRect() {
+        return collisionRect;
     }
 
     @Override
     public void update() {
-        if (state == State.jump) {
-            float dy = jumpSpeed * BaseScene.frameTime;
-            jumpSpeed += GRAVITY * BaseScene.frameTime;
-            if (y + dy >= ground) {
-                dy = ground - y;
-                state = State.idle;
-            }
-            y += dy;
-            fixDstRect();
+        super.update();
 
-        }
-        else if (state == State.idle) {
-            if (groundObject.collidesWith(dstRect)) {
-                // Collision occurred, handle it (e.g., change state to falling)
-                state = State.idle;
-            }
-        }
+        float time = BaseScene.frameTime;
+
     }
 
     @Override
     public void draw(Canvas canvas) {
-        long now = System.currentTimeMillis();
-        float time = (now - createdOn) / 1000.0f;
-        Rect[] rects = srcRects[state.ordinal()];
-        int frameIndex = Math.round(time * fps) % rects.length;
-        canvas.drawBitmap(bitmap, rects[frameIndex], dstRect, null);
-    }
-    public void jump() {
-        if (state == State.idle) {
-            state = State.jump;
-            jumpSpeed = -JUMP_POWER;
-        }
+
+        canvas.drawBitmap(bitmap, rects[0], dstRect, null);
+
     }
 }

@@ -13,12 +13,15 @@ import kr.ac.tukorea.swh02.jumpstopgame.BuildConfig;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IBoxCollidable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IGameObject;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IRecyclable;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.ITouchable;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.GameView;
 
 public class BaseScene {
     private static ArrayList<BaseScene> stack = new ArrayList<>();
     public static float frameTime;
     protected static Handler handler = new Handler();
     private static Paint bboxPaint;
+    protected long previousNanos;
 
     public static BaseScene getTopScene() {
         int top = stack.size() - 1;
@@ -33,14 +36,54 @@ public class BaseScene {
         }
     }
 
+    public int changeScene() {
+        BaseScene scene = getTopScene();
+        if (scene != null) {
+            scene.onEnd();
+        }
+        int topIndex = stack.size() - 1;
+        stack.set(topIndex, this);
+        this.onStart();
+        return stack.size();
+    }
+
     public int pushScene() {
+        BaseScene scene = getTopScene();
+        if (scene != null) {
+            scene.onPause();
+        }
         stack.add(this);
+        this.onStart();
         return stack.size();
     }
 
     public void popScene() {
+        this.onEnd();
         stack.remove(this);
-        // TODO: additional callback should be called
+        BaseScene scene = getTopScene();
+        if (scene != null) {
+            scene.resumeScene();
+            return;
+        }
+
+        finishActivity();
+    }
+
+    public void finishActivity() {
+        GameView.view.getActivity().finish();
+    }
+
+    public void pauseScene() {
+        onPause();
+    }
+
+    public void resumeScene() {
+        previousNanos = 0;
+        onResume();
+    }
+
+    public boolean isTransparent() {
+        return false;
     }
 
     protected <E extends Enum<E>> void initLayers(E countEnum) {
@@ -94,7 +137,13 @@ public class BaseScene {
         }
         return count;
     }
-    public void update(long elapsedNanos) {
+    public void update(long nanos) {
+        long prev = previousNanos;
+        previousNanos = nanos;
+        if (prev == 0) {
+            return;
+        }
+        long elapsedNanos = nanos - prev;
         frameTime = elapsedNanos / 1_000_000_000f;
         for (ArrayList<IGameObject> objects: layers) {
             for (int i = objects.size() - 1; i >= 0; i--) {
@@ -105,6 +154,15 @@ public class BaseScene {
     }
 
     public void draw(Canvas canvas) {
+        draw(canvas, stack.size() - 1);
+    }
+    protected void draw(Canvas canvas, int index) {
+        BaseScene scene = stack.get(index);
+        if (scene.isTransparent() && index > 0) {
+            draw(canvas, index - 1);
+        }
+
+        ArrayList<ArrayList<IGameObject>> layers = scene.layers;
         for (ArrayList<IGameObject> objects: layers) {
             for (IGameObject gobj : objects) {
                 gobj.draw(canvas);
@@ -134,10 +192,39 @@ public class BaseScene {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
+        int touchLayer = getTouchLayerIndex();
+        if (touchLayer < 0) return false;
+        ArrayList<IGameObject> gameObjects = layers.get(touchLayer);
+        for (IGameObject gobj : gameObjects) {
+            if (!(gobj instanceof ITouchable)) {
+                continue;
+            }
+            boolean processed = ((ITouchable) gobj).onTouchEvent(event);
+            if (processed) return true;
+        }
         return false;
     }
 
+    protected int getTouchLayerIndex() {
+        return -1;
+    }
+
     public boolean clipsRect() {
+        return true;
+    }
+
+    protected void onStart() {
+    }
+    protected void onEnd() {
+    }
+
+    protected void onPause() {
+    }
+    protected void onResume() {
+    }
+
+    public boolean handleBackKey() {
+        popScene();
         return true;
     }
 }
