@@ -16,7 +16,7 @@ public class Button extends Sprite implements ITouchable {
         public boolean onTouch(Action action);
     }
     public Button(int bitmapResId, float cx, float cy, float width, float height, Callback callback) {
-        super(bitmapResId, cx, cy, width, height);
+        super(cx, cy, width, height, bitmapResId);
         this.callback = callback;
     }
 

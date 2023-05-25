@@ -12,8 +12,7 @@ public class Sprite implements IGameObject {
     private static final String TAG = Sprite.class.getSimpleName();
     protected Bitmap bitmap;
     protected RectF dstRect = new RectF();
-    protected float x, y, width, height;
-    protected Sprite() {} // 상속받은 class 에서 자유롭게 생성자를 만들 수 있도록 default 생성자를 추가한다
+    protected float x, y, width, height, radius;
     public Sprite(int bitmapResId, float cx, float cy, float width, float height) {
         this.x = cx;
         this.y = cy;
@@ -27,6 +26,22 @@ public class Sprite implements IGameObject {
         Log.v(TAG, "Created " + this.getClass().getSimpleName() + "@" + System.identityHashCode(this));
     }
 
+    public Sprite(float x, float y, float w, float h, int bitmapResId) {
+        this.x = x;
+        this.y = y;
+        this.radius = w / 2;
+        dstRect.set(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
+        bitmap = BitmapPool.get(bitmapResId);
+    }
+    public Sprite(float x, float y, int radiusDimenResId, int bitmapResId) {
+        this.x = x;
+        this.y = y;
+        this.radius = 90.f;
+        dstRect.set(x - radius, y - radius, x + radius, y + radius);
+        bitmap = BitmapPool.get(bitmapResId);
+    }
+    protected Sprite() {
+    }
     public float getWidth() { return width; }
     public float getHeight() { return height; }
     public float getDstWidth() {
@@ -50,7 +65,9 @@ public class Sprite implements IGameObject {
         float half_height = height / 2;
         dstRect.set(x - half_width, y - half_height, x + half_width, y + half_height);
     }
-
+    public void setDstRect(float width, float height) {
+        dstRect.set(x - width / 2, y - height / 2, x + width / 2, y + height / 2);
+    }
     @Override
     public void update() {
     }

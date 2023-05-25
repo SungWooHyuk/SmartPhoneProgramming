@@ -1,19 +1,15 @@
 package kr.ac.tukorea.swh02.jumpstopgame.app;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.GameView;
-import kr.ac.tukorea.swh02.jumpstopgame.game.MainScene;
 
-public class MainActivity extends AppCompatActivity {
+public class BaseGameActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = BaseGameActivity.class.getSimpleName();
     protected GameView gameView;
 
     @Override
@@ -23,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
         gameView = new GameView(this);
         gameView.setFullScreen();
         setContentView(gameView);
-        new MainScene().pushScene();
     }
 
 

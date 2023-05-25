@@ -10,12 +10,12 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
 public class Ground extends Sprite {
 
-    private final float height = 10.f;
+    private float height = 10.f;
 
     public Ground(int bitmapResId) {
         super(bitmapResId, Metrics.game_width / 2, Metrics.game_height / 8, Metrics.game_width /2 , Metrics.game_height / 8);
-        //this.height = (bitmap.getHeight() * Metrics.game_width / bitmap.getWidth()) / 0.6f;
-        //setSize(Metrics.game_width, height);
+        this.height = (bitmap.getHeight() * Metrics.game_width / bitmap.getWidth()) / 0.6f;
+        setSize(Metrics.game_width, height);
     }
     @Override
     public void update() {

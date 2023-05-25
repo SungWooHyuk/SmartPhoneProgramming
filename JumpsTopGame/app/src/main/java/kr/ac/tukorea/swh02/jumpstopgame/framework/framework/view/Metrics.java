@@ -1,5 +1,7 @@
 package kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view;
 
+import android.content.res.Resources;
+
 public class Metrics {
     public static float scale = 1.0f;
     public static float game_width = 18.0f;
@@ -10,7 +12,11 @@ public class Metrics {
         game_width = width;
         game_height = height;
     }
-
+    public static float size(int dimenResId) {
+        Resources res = GameView.view.getResources();
+        float size = res.getDimension(dimenResId);
+        return size;
+    }
     public static float toGameX(float x) {
         return (x - x_offset) / scale;
     }

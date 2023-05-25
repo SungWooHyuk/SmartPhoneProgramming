@@ -8,85 +8,198 @@ import android.util.Log;
 
 import kr.ac.tukorea.swh02.jumpstopgame.R;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IBoxCollidable;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IRecyclable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.AnimSprite;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.SheetSprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.Sprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.res.BitmapPool;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.RecycleBin;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
-public class Player extends Sprite implements IBoxCollidable {
-    private static final float PLAYER_SIZE_RATIO = 0.2f; // 플레이어의 크기 비율
-
-    private static final float FIGHTER_Y_OFFSET = 10.2f;
-    private static final float PLAYER_WIDTH = 32 * 0.1f; //1.75f;
-    private static final float PLAYER_HEIGHT = 32 * 0.1f; //1.75f;
-    private static final float SPEED = 10.0f;
-    private static final float FIGHTER_LEFT = PLAYER_WIDTH / 2;
-    private static final float FIGHTER_RIGHT = 9.0f - PLAYER_WIDTH / 2;
+public class Player extends SheetSprite {
+    private static final float FRAMES_PER_SECOND = 8.f;
     private static final String TAG = Player.class.getSimpleName();
-    private float tx;
-    private static final Rect[] rects = new Rect[] {
-            new Rect(  0, 0,   0 + 32, 32),
-            new Rect( 32, 0,  32 + 32, 32),
-            new Rect(64, 0, 64 + 32, 32),
-            new Rect(96, 0, 96 + 32, 32),
-            new Rect(128, 0, 128 + 32, 32),
-            new Rect(160, 0, 160 + 32, 32),
-            new Rect(192, 0, 192 + 32, 32),
-            new Rect(224, 0, 224 + 32, 32),
-            new Rect(256, 0, 256 + 32, 32),
-            new Rect(288, 0, 288 + 32, 32),
-            new Rect(320, 0, 320 + 32, 32),
-    };
-    private RectF collisionRect; // RectF 객체 추가
-    private static final int FRAME_COUNT = 11; // 스프라이트 이미지 프레임 개수
-    private static final int FRAME_WIDTH = 32; // 스프라이트 이미지 프레임의 너비
-    private static final int FRAME_HEIGHT = 32; // 스프라이트 이미지 프레임의 높이
-    private static final float FPS = 10.0f; // 프레임 속도 (프레임/초)
-    private float rollTime;
-    private static final float MAX_ROLL_TIME = 0.4f;
-    public Player() {
-        super(R.mipmap.frog_idle, Metrics.game_width / 2, Metrics.game_height - FIGHTER_Y_OFFSET, PLAYER_WIDTH, PLAYER_HEIGHT);
-        collisionRect = new RectF();
+    private final float jumpPower;
+    private final float gravity;
+    private float save_pos_x;
+    private  float save_pos_y;
+
+    static {
+        State.initRects();
     }
-    private static float calculatePlayerWidth() {
-        return Metrics.getGameWidth() * PLAYER_SIZE_RATIO;
+    public enum  movestate{
+        left,right,stop ,COUNT;
+    }
+    public enum PlayerType{
+        Red,Blue,COUNT;
+        public int playerBitmap(PlayerType type){
+            if (type == PlayerType.Red){
+                return R.mipmap.frog_idle;
+            }
+            else if(type == PlayerType.Blue){
+                return R.mipmap.frog_idle;
+            }
+            return  0;
+        }
+    }
+    private enum State {
+        run, jump,idle, falling, slide, COUNT;
+        Rect[] srcRects() {
+            return rectsArray[this.ordinal()];
+        }
+        void applyInsets(RectF dstRect) {
+            float[] inset = insets[this.ordinal()];
+            float w = dstRect.width();
+            float h = dstRect.height();
+            dstRect.left += w * inset[0];
+            dstRect.top += h * inset[1];
+            dstRect.right -= w * inset[2];
+            dstRect.bottom -= h * inset[3];
+        }
+        static Rect[][] rectsArray;
+        static void initRects() {
+            int[][] indices = {
+                    new int[] { 0,1,2,3,4,5,6,7,8,9,10}, // run
+                    new int[] { 0,}, // jump
+                    new int[] { 0,1,2,3,4,5,6}, // jump
+                    new int[] { 0,}, // doubleJump
+                    new int[] { 0 }, // falling
+                    new int[] { 9, 10 },    //slide
+            };
+            rectsArray = new Rect[indices.length][];
+            for (int r = 0; r < indices.length; r++) {
+                int[] ints = indices[r];
+                Rect[] rects = new Rect[ints.length];
+
+                for (int i = 0; i < ints.length; i++) {
+                    int idx = ints[i];
+                    int l = (idx % 100) * 32;
+                    Rect rect = new Rect(l, 0, l+32,   32);
+                    rects[i] = rect;
+                }
+
+                rectsArray[r] = rects;
+            }
+        }
+        float[][] insets = {
+                new float[] { 0.10f, 0.05f, 0.10f, 0.00f }, // run
+                new float[] { 0.10f, 0.20f, 0.10f, 0.00f }, // jump
+                new float[] { 0.10f, 0.15f, 0.10f, 0.00f }, // doubleJump
+                new float[] { 0.10f, 0.05f, 0.10f, 0.00f }, // falling
+                new float[] { 0.00f, 0.50f, 0.00f, 0.00f }, // slide
+        };
+    }
+    private State state = State.run;
+
+    private float jumpSpeed;
+    private float moveSpeed;
+    private float fliction;
+    public movestate movedir;
+    private  float m_w;
+    private  float m_h;
+    private PlayerType p_type;
+
+    protected RectF collisionBox = new RectF();
+
+    private static final int FRAME_COUNT = 11;
+    private static final int IMAGE_SIZE = 32;
+
+    private TYPE type;
+
+    public Player(float x, float y, float w, float h, PlayerType type ) {
+
+        super(type.playerBitmap(type), FRAMES_PER_SECOND * 2);
+        this.x = x;
+        this.y = y;
+        m_w =w/2;
+        m_h = h/2;
+        save_pos_x = x;
+        save_pos_y = y;
+        jumpPower = 9.f;
+        moveSpeed = 9.f;
+        gravity = 9.f;
+        setDstRect(w/2, h/2);
+        setState(State.run);
+        SetBitmapflipSize(32);
+        p_type = type;
+
+    }
+    public RectF getBoundingRect() {
+        return collisionBox;
     }
 
-    private static float calculatePlayerHeight() {
-        return Metrics.getGameHeight() * PLAYER_SIZE_RATIO;
+    public void InitPlayer()
+    {
+        this.x = save_pos_x;
+        this.y = save_pos_y;
+        setDstRect(m_w, m_h);
+        collisionBox.set(dstRect);
+        setState(State.falling);
+        jumpSpeed = 0;
     }
 
-    private static float calculatePlayerX() {
-        return Metrics.getGameWidth() / 2 - calculatePlayerWidth() / 2;
+    public enum TYPE {
+        Blue, Red, COUNT
     }
 
-    private static float calculatePlayerY() {
-        return Metrics.getGameHeight() / 2 - calculatePlayerHeight() / 2;
+    private Rect[][] rects_array;
+    private void init(TYPE type, float speed, float size) {
+        this.type = type;
+        this.width = this.height = size;
+        srcRects = rects_array[type.ordinal()];
     }
-    private static Rect calculatePlayerSize() {
-        int playerWidth = (int) (Metrics.getGameWidth() * PLAYER_SIZE_RATIO);
-        int playerHeight = (int) (Metrics.getGameHeight() * PLAYER_SIZE_RATIO);
-        return new Rect(0, 0, playerWidth, playerHeight);
+    public void update(float frameTime) {
+        float foot = collisionBox.bottom;
+        setState(State.run);
+    }
+    public void setmovedir(int dir)
+    {
+
+        if(dir == 0){
+            movedir = movestate.stop;
+        }
+        else if(dir == 1){
+            movedir = movestate.left;
+            SetBitmapflip(true);
+            // setState(State.run);
+        }
+        else if(dir == 2){
+            SetBitmapflip(false);
+            //   setState(State.run);
+
+            movedir = movestate.right;
+        }
+
+
     }
 
-    @Override
-    public RectF getCollisionRect() {
-        return collisionRect;
-    }
+    public void setState(State state) {
+        this.state = state;
+        if (state== State.jump)
+        {
+            if(p_type == PlayerType.Red)
+                ChangeBitmap(R.mipmap.frog_jump);
+        }
+        if (state== State.run)
+        {
+            if(p_type == PlayerType.Red)
+                ChangeBitmap(R.mipmap.frog_move);
+        }
+        if (state== State.idle)
+        {
+            if(p_type == PlayerType.Red)
+                ChangeBitmap(R.mipmap.frog_idle);
+        }
+        if (state== State.falling)
+        {
+            if(p_type == PlayerType.Red)
+                ChangeBitmap(R.mipmap.frog_fall);
+        }
 
-    @Override
-    public void update() {
-        super.update();
-
-        float time = BaseScene.frameTime;
-
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
-
-        canvas.drawBitmap(bitmap, rects[0], dstRect, null);
-
+        srcRects = state.srcRects();
+        collisionBox.set(dstRect);
+        state.applyInsets(collisionBox);
     }
 }
+

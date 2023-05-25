@@ -35,7 +35,7 @@ public class BaseScene {
             scene.popScene();
         }
     }
-
+    protected ArrayList<ArrayList<IGameObject>> layers = new ArrayList<>();
     public int changeScene() {
         BaseScene scene = getTopScene();
         if (scene != null) {
@@ -186,7 +186,7 @@ public class BaseScene {
         }
     }
 
-    protected ArrayList<ArrayList<IGameObject>> layers = new ArrayList<>();
+
     public <E extends Enum> ArrayList<IGameObject> getObjectsAt(E layerEnum) {
         return layers.get(layerEnum.ordinal());
     }
