@@ -5,12 +5,11 @@ import android.graphics.Canvas;
 import java.util.ArrayList;
 
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IGameObject;
-import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.res.Sound;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.util.CollisionHelper;
 
 public class CollisionChecker implements IGameObject {
-    private Player player;
+    private final Player player;
 
     public CollisionChecker(Player player) {
         this.player = player;
@@ -19,6 +18,13 @@ public class CollisionChecker implements IGameObject {
     @Override
     public void update() {
         MainScene scene = (MainScene) BaseScene.getTopScene();
+
+    }
+
+   // @Override
+    //public void update(float frameTime) {
+
+   //     }
 //        ArrayList<IGameObject> items = scene.getObjectsAt(MainScene.Layer.item);
 //        for (int i = items.size() - 1; i >= 0; i--) {
 //            IGameObject gobj = items.get(i);
@@ -41,7 +47,6 @@ public class CollisionChecker implements IGameObject {
 //                player.hurt(obstacle);
 //            }
 //        }
-    }
 
     @Override
     public void draw(Canvas canvas) {}

@@ -10,21 +10,23 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
 public class Ground extends Sprite {
 
-    private float height = 10.f;
+    private float height;
 
     public Ground(int bitmapResId) {
-        super(bitmapResId, Metrics.game_width / 2, Metrics.game_height / 8, Metrics.game_width /2 , Metrics.game_height / 8);
-        this.height = (bitmap.getHeight() * Metrics.game_width / bitmap.getWidth()) / 0.6f;
+        super(bitmapResId, Metrics.game_width , Metrics.game_height , Metrics.game_width  , Metrics.game_height );
+        this.height = (bitmap.getHeight() * Metrics.game_width / bitmap.getWidth());
         setSize(Metrics.game_width, height);
     }
     @Override
     public void update() {
 
     }
-
+    public RectF getCollisionRect() {
+        return dstRect;
+    }
     @Override
     public void draw(Canvas canvas) {
-        dstRect.set(3.f, 32.f - height, 17.f, 28.f );
+        dstRect.set(2.f, 32.f - height, 18.f, 28.f );
         canvas.drawBitmap(bitmap, null, dstRect, null);
     }
 

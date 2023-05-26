@@ -5,9 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
+import android.view.Gravity;
+
+import java.util.ArrayList;
 
 import kr.ac.tukorea.swh02.jumpstopgame.R;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IBoxCollidable;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IGameObject;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IRecyclable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.AnimSprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.SheetSprite;
@@ -17,9 +21,11 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.RecycleBin;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
-public class Player extends SheetSprite {
+public class Player extends SheetSprite implements IBoxCollidable{
     private static final float FRAMES_PER_SECOND = 8.f;
     private static final String TAG = Player.class.getSimpleName();
+    private  CollisionChecker collisionChecker = new CollisionChecker(this);
+    private Ground ground;
     private final float jumpPower;
     private final float gravity;
     private float save_pos_x;
@@ -28,6 +34,12 @@ public class Player extends SheetSprite {
     static {
         State.initRects();
     }
+
+    @Override
+    public RectF getCollisionRect() {
+        return collisionBox;
+    }
+
     public enum  movestate{
         left,right,stop ,COUNT;
     }
@@ -43,6 +55,8 @@ public class Player extends SheetSprite {
             return  0;
         }
     }
+
+
     private enum State {
         run, jump,idle, falling, slide, COUNT;
         Rect[] srcRects() {
@@ -52,10 +66,12 @@ public class Player extends SheetSprite {
             float[] inset = insets[this.ordinal()];
             float w = dstRect.width();
             float h = dstRect.height();
-            dstRect.left += w * inset[0];
-            dstRect.top += h * inset[1];
-            dstRect.right -= w * inset[2];
-            dstRect.bottom -= h * inset[3];
+
+            dstRect.set(
+                    dstRect.left += w * inset[0],
+                    dstRect.top += h * inset[1],
+                    dstRect.right -= w * inset[2],
+                    dstRect.bottom -= h * inset[3]);
         }
         static Rect[][] rectsArray;
         static void initRects() {
@@ -99,31 +115,24 @@ public class Player extends SheetSprite {
     private  float m_w;
     private  float m_h;
     private PlayerType p_type;
-
-    protected RectF collisionBox = new RectF();
-
-    private static final int FRAME_COUNT = 11;
-    private static final int IMAGE_SIZE = 32;
-
-    private TYPE type;
+    protected static RectF collisionBox = new RectF();
 
     public Player(float x, float y, float w, float h, PlayerType type ) {
 
-        super(type.playerBitmap(type), FRAMES_PER_SECOND * 2);
+        super(type.playerBitmap(type), FRAMES_PER_SECOND * 4);
         this.x = x;
         this.y = y;
-        m_w =w/2;
-        m_h = h/2;
+        m_w =w/1.5f;
+        m_h = h/1.5f;
         save_pos_x = x;
         save_pos_y = y;
-        jumpPower = 9.f;
+        jumpPower = 5.f;
         moveSpeed = 9.f;
         gravity = 9.f;
-        setDstRect(w/2, h/2);
-        setState(State.run);
+        setDstRect(w/1.5f, h/1.5f);
+        setState(State.falling);
         SetBitmapflipSize(32);
         p_type = type;
-
     }
     public RectF getBoundingRect() {
         return collisionBox;
@@ -136,26 +145,70 @@ public class Player extends SheetSprite {
         setDstRect(m_w, m_h);
         collisionBox.set(dstRect);
         setState(State.falling);
-        jumpSpeed = 0;
     }
 
-    public enum TYPE {
-        Blue, Red, COUNT
-    }
+
 
     private Rect[][] rects_array;
-    private void init(TYPE type, float speed, float size) {
-        this.type = type;
-        this.width = this.height = size;
-        srcRects = rects_array[type.ordinal()];
+
+    public void update() {
+        super.update();
+        switch (state)
+        {
+            case falling:
+                float dy = jumpSpeed * BaseScene.frameTime;
+                jumpSpeed += gravity * BaseScene.frameTime;
+                if (jumpSpeed >= 0)
+                {
+                    float foot = collisionBox.bottom;
+                    float floor = 24.5f;
+
+                    Log.w(TAG, "foot:" + dy + " platform: " + dy);
+
+                    if (foot + dy >= floor) {
+                        dy = floor - foot;
+                        state = State.run;
+                        setState(State.run);
+                    }
+                }
+                y += dy;
+                dstRect.offset(0, dy);
+                collisionBox.set(dstRect);
+                state.applyInsets(collisionBox);
+                break;
+            case run:
+
+        }
     }
-    public void update(float frameTime) {
-        float foot = collisionBox.bottom;
-        setState(State.run);
+    private float findNearestPlatformTop() {
+        return ground.getCollisionRect().top;
+    }
+
+    private Ground findNearestPlatform(float foot) {
+        Ground nearest = null;
+        MainScene scene = (MainScene) BaseScene.getTopScene();
+        ArrayList<IGameObject> platforms = scene.getObjectsAt(MainScene.Layer.GROUND);
+        float top = Metrics.game_height - (bitmap.getHeight() * Metrics.game_width / bitmap.getWidth());
+        for (IGameObject obj: platforms) {
+            Ground platform = (Ground) obj;
+            RectF rect = platform.getCollisionRect();
+            if (rect.left > x || x > rect.right) {
+                continue;
+            }
+            //Log.d(TAG, "foot:" + foot + " platform: " + rect);
+            if (rect.top < foot) {
+                continue;
+            }
+            if (top > rect.top) {
+                top = rect.top;
+                nearest = platform;
+            }
+            //Log.d(TAG, "top=" + top + " gotcha:" + platform);
+        }
+        return nearest;
     }
     public void setmovedir(int dir)
     {
-
         if(dir == 0){
             movedir = movestate.stop;
         }
@@ -167,39 +220,36 @@ public class Player extends SheetSprite {
         else if(dir == 2){
             SetBitmapflip(false);
             //   setState(State.run);
-
             movedir = movestate.right;
         }
-
-
     }
 
     public void setState(State state) {
         this.state = state;
         if (state== State.jump)
         {
-            if(p_type == PlayerType.Red)
-                ChangeBitmap(R.mipmap.frog_jump);
+            ChangeBitmap(R.mipmap.frog_jump);
         }
         if (state== State.run)
         {
-            if(p_type == PlayerType.Red)
-                ChangeBitmap(R.mipmap.frog_move);
+            ChangeBitmap(R.mipmap.frog_move);
         }
         if (state== State.idle)
         {
-            if(p_type == PlayerType.Red)
-                ChangeBitmap(R.mipmap.frog_idle);
+            ChangeBitmap(R.mipmap.frog_idle);
         }
         if (state== State.falling)
         {
-            if(p_type == PlayerType.Red)
-                ChangeBitmap(R.mipmap.frog_fall);
+            ChangeBitmap(R.mipmap.frog_fall);
         }
 
         srcRects = state.srcRects();
         collisionBox.set(dstRect);
         state.applyInsets(collisionBox);
+    }
+
+    public void jump() {
+        Log.w(TAG, "Jump");
     }
 }
 

@@ -33,13 +33,6 @@ public class Sprite implements IGameObject {
         dstRect.set(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
         bitmap = BitmapPool.get(bitmapResId);
     }
-    public Sprite(float x, float y, int radiusDimenResId, int bitmapResId) {
-        this.x = x;
-        this.y = y;
-        this.radius = 90.f;
-        dstRect.set(x - radius, y - radius, x + radius, y + radius);
-        bitmap = BitmapPool.get(bitmapResId);
-    }
     protected Sprite() {
     }
     public float getWidth() { return width; }
