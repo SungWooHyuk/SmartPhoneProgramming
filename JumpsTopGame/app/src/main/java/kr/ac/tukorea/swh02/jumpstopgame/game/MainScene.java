@@ -1,5 +1,6 @@
 package kr.ac.tukorea.swh02.jumpstopgame.game;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 import kr.ac.tukorea.swh02.jumpstopgame.R;
@@ -37,7 +38,7 @@ public class MainScene extends BaseScene {
         add(Layer.GROUND, new Ground(R.mipmap.ground));
         add(Layer.PLAYER, playerRed);
 
-        add(Layer.TOUCH, new Button(R.mipmap.btn_jump_n, 4.f, 30.f, 3.0f, 3.f, new Button.Callback() {
+        add(Layer.TOUCH, new Button(R.mipmap.btn_jump_p, 4.f, 28.f, 5.0f, 3.f, new Button.Callback() {
             @Override
             public boolean onTouch(Button.Action action) {
                 if (action == Button.Action.pressed) {
@@ -46,18 +47,47 @@ public class MainScene extends BaseScene {
                 return true;
             }
         }));
-        add(Layer.TOUCH, new Button(R.mipmap.btn_fall_n, 14.5f, 8.5f, 2.0f, 0.75f, new Button.Callback() {
+        add(Layer.TOUCH, new Button(R.mipmap.stop_p, 8.f, 28.f, 3.f, 3.f, new Button.Callback() {
             @Override
             public boolean onTouch(Button.Action action) {
                 if (action == Button.Action.pressed) {
+
                     playerRed.jump();
                 }
                 //Log.d(TAG, "Button: Fall");
                 return true;
             }
         }));
-    }
 
+        float btn_x = size(2.5f);
+        float btn_y = size(8.75f);
+        float btn_w = size(8.0f / 2.0f);
+        float btn_h = size(1.5f);
+
+        add(Layer.TOUCH, new Button(
+                btn_x, btn_y, btn_w, btn_h, R.mipmap.bt_nomal, R.mipmap.bt_press,
+                new Button.Calltoback() {
+                    @Override
+                    public boolean onTouch(Button.Action action,boolean pressed) {
+                        if(action == Button.Action.moveLeft)
+                        {
+                            playerRed.setmovedir(1);
+                        }
+                        else if(action == Button.Action.moveRight)
+                        {
+                            playerRed.setmovedir(2);
+                        }
+                        else if(action == Button.Action.released)
+                        {
+                            playerRed.setmovedir(0);
+                        }
+                        return true;
+                    }
+                }));
+    }
+    protected int getTouchLayerIndex() {
+        return Layer.TOUCH.ordinal();
+    }
     @Override
     protected void onStart() {
         super.onStart();

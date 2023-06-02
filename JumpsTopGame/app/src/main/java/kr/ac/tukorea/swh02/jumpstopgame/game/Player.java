@@ -128,7 +128,7 @@ public class Player extends SheetSprite implements IBoxCollidable{
         save_pos_y = y;
         jumpPower = 5.f;
         moveSpeed = 9.f;
-        gravity = 9.f;
+        gravity = 9.8f;
         setDstRect(w/1.5f, h/1.5f);
         setState(State.falling);
         SetBitmapflipSize(32);
@@ -157,6 +157,7 @@ public class Player extends SheetSprite implements IBoxCollidable{
         {
             case falling:
                 float dy = jumpSpeed * BaseScene.frameTime;
+                Log.w(TAG, "foot:" + dy + " platform: " + dy);
                 jumpSpeed += gravity * BaseScene.frameTime;
                 if (jumpSpeed >= 0)
                 {
@@ -249,7 +250,10 @@ public class Player extends SheetSprite implements IBoxCollidable{
     }
 
     public void jump() {
-        Log.w(TAG, "Jump");
+        if (state == State.run) {
+            setState(State.falling);
+            jumpSpeed = -jumpPower;
+        }
     }
 }
 
