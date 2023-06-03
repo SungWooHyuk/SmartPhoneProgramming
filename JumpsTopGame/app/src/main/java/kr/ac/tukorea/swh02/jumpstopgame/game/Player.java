@@ -14,6 +14,7 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IBoxColli
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IGameObject;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IRecyclable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.AnimSprite;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.PlayerSheetSprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.SheetSprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.Sprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.res.BitmapPool;
@@ -21,10 +22,10 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.RecycleBin;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
-public class Player extends SheetSprite implements IBoxCollidable{
+public class Player extends PlayerSheetSprite implements IBoxCollidable{
     private static final float FRAMES_PER_SECOND = 8.f;
     private static final String TAG = Player.class.getSimpleName();
-    private  CollisionChecker collisionChecker = new CollisionChecker(this);
+    //private  CollisionChecker collisionChecker = new CollisionChecker(this);
     private Ground ground;
     private final float jumpPower;
     private final float gravity;
@@ -188,7 +189,6 @@ public class Player extends SheetSprite implements IBoxCollidable{
                     }
                 }
 
-                Log.d(TAG, "dx:" + dx);
                 dstRect.offset(dx, dy);
                 collisionBox.set(dstRect);
                 state.applyInsets(collisionBox);
@@ -319,5 +319,6 @@ public class Player extends SheetSprite implements IBoxCollidable{
             setState(State.falling);
         }
     }
+
 }
 

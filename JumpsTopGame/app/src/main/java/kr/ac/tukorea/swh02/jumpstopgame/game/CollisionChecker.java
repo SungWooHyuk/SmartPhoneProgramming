@@ -1,6 +1,7 @@
 package kr.ac.tukorea.swh02.jumpstopgame.game;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -9,8 +10,8 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.util.CollisionHelper;
 
 public class CollisionChecker implements IGameObject {
-    private final Player player;
-
+    private Player player;
+    private static final String TAG = CollisionChecker.class.getSimpleName();
     public CollisionChecker(Player player) {
         this.player = player;
     }
@@ -18,35 +19,21 @@ public class CollisionChecker implements IGameObject {
     @Override
     public void update() {
         MainScene scene = (MainScene) BaseScene.getTopScene();
+        ArrayList<IGameObject> enemys = scene.getObjectsAt(MainScene.Layer.ENEMY);
+        Log.d(TAG, "collsion:" + player.getCollisionRect().top);
+        for (int i = enemys.size() - 1; i >= 0; i--) {
+            IGameObject gobj = enemys.get(i);
+            if (!(gobj instanceof Fly)) {
+                continue;
+            }
+            Fly enemy = (Fly) gobj;
+            if (CollisionHelper.collides(player, enemy)) {
 
+                scene.remove(MainScene.Layer.ENEMY, gobj);
+                //Sound.playEffect(item.soundId());
+            }
+        }
     }
-
-   // @Override
-    //public void update(float frameTime) {
-
-   //     }
-//        ArrayList<IGameObject> items = scene.getObjectsAt(MainScene.Layer.item);
-//        for (int i = items.size() - 1; i >= 0; i--) {
-//            IGameObject gobj = items.get(i);
-//            if (!(gobj instanceof BoxCollidable)) {
-//                continue;
-//            }
-//            JellyItem item = (JellyItem) gobj;
-//            if (CollisionHelper.collides(player, item)) {
-//                scene.remove(MainScene.Layer.item, gobj);
-//                Sound.playEffect(item.soundId());
-//                if (item.index == 26) {
-//                    player.magnify(true);
-//                }
-//            }
-//        }
-//        ArrayList<IGameObject> obstacles = scene.getObjectsAt(MainScene.Layer.obstacle);
-//        for (int i = obstacles.size() - 1; i >= 0; i--) {
-//            Obstacle obstacle = (Obstacle) obstacles.get(i);
-//            if (CollisionHelper.collides(player, obstacle)) {
-//                player.hurt(obstacle);
-//            }
-//        }
 
     @Override
     public void draw(Canvas canvas) {}

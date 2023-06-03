@@ -4,10 +4,13 @@ import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.util.Log;
 
 import java.util.Random;
 
 import kr.ac.tukorea.swh02.jumpstopgame.R;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IBoxCollidable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IRecyclable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.SheetSprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
@@ -15,9 +18,17 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.RecycleBin;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.util.Gauge;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
-public class Fly extends SheetSprite implements IRecyclable {
+public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
+    private static final String TAG = Fly.class.getSimpleName();
     private Type type;
     private float speed, distance;
+
+    protected Rect srcRect = new Rect();
+    protected RectF collisionBox = new RectF();
+    @Override
+    public RectF getCollisionRect() {
+        return collisionBox;
+    }
 
     public enum Type {
         boss, red, blue, cyan, dragon, COUNT, RANDOM;
@@ -61,13 +72,13 @@ public class Fly extends SheetSprite implements IRecyclable {
     public void update() {
         super.update();
         distance += speed * BaseScene.frameTime;
-        moveTo(6, 13);
-        if (distance > Metrics.getGameWidth()) {
-            BaseScene.getTopScene().remove(MainScene.Layer.ENEMY, this);
-        }
+        moveTo(distance, y);
+        collisionBox.set(dstRect);
     }
 
     @Override
     public void onRecycle() {
     }
+
+
 }

@@ -26,8 +26,8 @@ public class FlyGen implements IGameObject {
         float y = rand.nextFloat() * Metrics.game_height;
         float size = rand.nextFloat() + 2;
         float speed = rand.nextFloat() * 0.5f + 1.0f;
-        Fly fly = Fly.get(Fly.Type.blue, speed, size * 5);
-        fly.moveTo(Metrics.getGameWidth()/2, Metrics.getGameHeight()/2 );
+        Fly fly = Fly.get(Fly.Type.blue, speed, size);
+        fly.moveTo(0, 16);
         MainScene scene = (MainScene) BaseScene.getTopScene();
         scene.add(MainScene.Layer.ENEMY, fly);
     }

@@ -11,6 +11,7 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 public class MainScene extends BaseScene {
     private static final String TAG = MainScene.class.getSimpleName();
     private Player playerRed;
+    private CollisionChecker ck;
     private static MainScene singleton;
     public static MainScene get() {
         if (singleton == null) {
@@ -34,11 +35,11 @@ public class MainScene extends BaseScene {
               9.f, size(6),
                 size(1*0.9f), size(1 * 0.9f), Player.PlayerType.Red
         );
-
+        ck = new CollisionChecker(playerRed);
         add(Layer.BG, new BackGround(R.mipmap.background, 1.0f));
         add(Layer.GROUND, new Ground(R.mipmap.ground));
         add(Layer.PLAYER, playerRed);
-        add(Layer.controller, new FlyGen());
+
         add(Layer.TOUCH, new Button(R.mipmap.jumpbutton, 4.f, 29.f, 3.5f, 3.5f, new Button.Callback() {
             @Override
             public boolean onTouch(Button.Action action) {
@@ -72,7 +73,8 @@ public class MainScene extends BaseScene {
             }
         }));
 
-
+        add(Layer.controller, new FlyGen());
+        add(Layer.controller, ck);
     }
 
     protected int getTouchLayerIndex() {
