@@ -126,9 +126,9 @@ public class Player extends SheetSprite implements IBoxCollidable{
         m_h = h/1.5f;
         save_pos_x = x;
         save_pos_y = y;
-        jumpPower = 5.f;
-        moveSpeed = 9.f;
-        gravity = 9.8f;
+        jumpPower = 30.f;
+        moveSpeed = 4.f;
+        gravity = 20.8f;
         setDstRect(w/1.5f, h/1.5f);
         setState(State.falling);
         SetBitmapflipSize(32);
@@ -157,28 +157,68 @@ public class Player extends SheetSprite implements IBoxCollidable{
         {
             case falling:
                 float dy = jumpSpeed * BaseScene.frameTime;
-                Log.w(TAG, "foot:" + dy + " platform: " + dy);
+                float dx = 0.f;
+
                 jumpSpeed += gravity * BaseScene.frameTime;
                 if (jumpSpeed >= 0)
                 {
                     float foot = collisionBox.bottom;
                     float floor = 24.5f;
 
-                    Log.w(TAG, "foot:" + dy + " platform: " + dy);
-
                     if (foot + dy >= floor) {
                         dy = floor - foot;
-                        state = State.run;
-                        setState(State.run);
+                        state = State.idle;
+                        setState(State.idle);
                     }
                 }
                 y += dy;
-                dstRect.offset(0, dy);
+
+                if( movedir == movestate.left)
+                {
+                    if(dstRect.left > 2.f) {
+                        dx = -moveSpeed * BaseScene.frameTime;
+                        x += dx;
+                    }
+                }
+                if( movedir == movestate.right)
+                {
+                    if(dstRect.right < 16.f) {
+                        dx = moveSpeed * BaseScene.frameTime;
+                        x += dx;
+                    }
+                }
+
+                Log.d(TAG, "dx:" + dx);
+                dstRect.offset(dx, dy);
                 collisionBox.set(dstRect);
                 state.applyInsets(collisionBox);
                 break;
             case run:
+                float fx = 0;
+                if( movedir == movestate.left)
+                {
+                    if(dstRect.left > 2.f) {
+                        fx = -moveSpeed * BaseScene.frameTime;
+                        x += fx;
+                    }
+                }
+                if( movedir == movestate.right)
+                {
+                    if(dstRect.right < 16.f) {
+                        fx = moveSpeed * BaseScene.frameTime;
+                        x += fx;
+                    }
+                }
+                dstRect.offset(fx, 0);
+                collisionBox.set(dstRect);
+                state.applyInsets(collisionBox);
 
+                break;
+            case idle:
+                dstRect.offset(0, 0);
+                collisionBox.set(dstRect);
+                state.applyInsets(collisionBox);
+                break;
         }
     }
     private float findNearestPlatformTop() {
@@ -208,20 +248,34 @@ public class Player extends SheetSprite implements IBoxCollidable{
         }
         return nearest;
     }
-    public void setmovedir(int dir)
+    public void setmovedir(int dir, boolean movestop)
     {
         if(dir == 0){
             movedir = movestate.stop;
         }
-        else if(dir == 1){
+        else if(dir == 1 && movestop && state == State.falling){
             movedir = movestate.left;
             SetBitmapflip(true);
-            // setState(State.run);
         }
-        else if(dir == 2){
+        else if(dir == 1 && movestop && state != State.run){
+            movedir = movestate.left;
+            SetBitmapflip(true);
+            setState(State.run);
+        }
+        else if(dir == 2 && movestop && state == State.falling){
             SetBitmapflip(false);
-            //   setState(State.run);
             movedir = movestate.right;
+        }
+        else if(dir == 2 && movestop && state != State.run){
+            SetBitmapflip(false);
+            movedir = movestate.right;
+            setState(State.run);
+        }
+        else if(dir == 1 && !movestop && state == State.run){
+            setState((State.idle));
+        }
+        else if(dir == 2 && !movestop && state == State.run){
+            setState((State.idle));
         }
     }
 
@@ -250,9 +304,19 @@ public class Player extends SheetSprite implements IBoxCollidable{
     }
 
     public void jump() {
-        if (state == State.run) {
+        if (state == State.idle) {
             setState(State.falling);
             jumpSpeed = -jumpPower;
+        }
+    }
+
+    public void Stop(boolean startstop) {
+        if (state != State.idle && startstop) {
+            setState(State.idle);
+        }
+
+        if (state == State.idle && !startstop) {
+            setState(State.falling);
         }
     }
 }

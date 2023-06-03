@@ -19,7 +19,7 @@ public class MainScene extends BaseScene {
         return singleton;
     }
     public enum Layer {
-        BG, PLAYER, GROUND, TOUCH, COUNT
+        BG, PLAYER, GROUND, TOUCH, ENEMY, controller, COUNT
     }
     public float size(float unit) {
         return Metrics.getGameHeight() / 9.5f * unit;
@@ -34,11 +34,12 @@ public class MainScene extends BaseScene {
               9.f, size(6),
                 size(1*0.9f), size(1 * 0.9f), Player.PlayerType.Red
         );
+
         add(Layer.BG, new BackGround(R.mipmap.background, 1.0f));
         add(Layer.GROUND, new Ground(R.mipmap.ground));
         add(Layer.PLAYER, playerRed);
-
-        add(Layer.TOUCH, new Button(R.mipmap.btn_jump_p, 4.f, 28.f, 5.0f, 3.f, new Button.Callback() {
+        add(Layer.controller, new FlyGen());
+        add(Layer.TOUCH, new Button(R.mipmap.jumpbutton, 4.f, 29.f, 3.5f, 3.5f, new Button.Callback() {
             @Override
             public boolean onTouch(Button.Action action) {
                 if (action == Button.Action.pressed) {
@@ -47,44 +48,33 @@ public class MainScene extends BaseScene {
                 return true;
             }
         }));
-        add(Layer.TOUCH, new Button(R.mipmap.stop_p, 8.f, 28.f, 3.f, 3.f, new Button.Callback() {
+        add(Layer.TOUCH, new Button(R.mipmap.stopbutton, 7.5f, 29.f, 3.15f, 3.15f, new Button.Callback() {
             @Override
             public boolean onTouch(Button.Action action) {
-                if (action == Button.Action.pressed) {
-
-                    playerRed.jump();
+                    playerRed.Stop(action == Button.Action.pressed);
+                    return true;
                 }
-                //Log.d(TAG, "Button: Fall");
-                return true;
+            }));
+
+        add(Layer.TOUCH, new Button(R.mipmap.leftbutton, 11.f, 29.f, 3.15f, 3.15f, new Button.Callback() {
+            @Override
+            public boolean onTouch(Button.Action action) {
+                    playerRed.setmovedir(1, action == Button.Action.pressed);
+                    return true;
             }
         }));
 
-        float btn_x = size(2.5f);
-        float btn_y = size(8.75f);
-        float btn_w = size(8.0f / 2.0f);
-        float btn_h = size(1.5f);
+        add(Layer.TOUCH, new Button(R.mipmap.rightbutton, 14.5f, 29.f, 3.5f, 3.5f, new Button.Callback() {
+            @Override
+            public boolean onTouch(Button.Action action) {
+                    playerRed.setmovedir(2, action == Button.Action.pressed);
+                    return true;
+            }
+        }));
 
-        add(Layer.TOUCH, new Button(
-                btn_x, btn_y, btn_w, btn_h, R.mipmap.bt_nomal, R.mipmap.bt_press,
-                new Button.Calltoback() {
-                    @Override
-                    public boolean onTouch(Button.Action action,boolean pressed) {
-                        if(action == Button.Action.moveLeft)
-                        {
-                            playerRed.setmovedir(1);
-                        }
-                        else if(action == Button.Action.moveRight)
-                        {
-                            playerRed.setmovedir(2);
-                        }
-                        else if(action == Button.Action.released)
-                        {
-                            playerRed.setmovedir(0);
-                        }
-                        return true;
-                    }
-                }));
+
     }
+
     protected int getTouchLayerIndex() {
         return Layer.TOUCH.ordinal();
     }
