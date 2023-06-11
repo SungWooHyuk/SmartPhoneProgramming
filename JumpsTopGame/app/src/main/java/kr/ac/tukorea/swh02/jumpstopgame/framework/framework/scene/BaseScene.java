@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
@@ -15,8 +16,10 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IGameObje
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IRecyclable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.ITouchable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.GameView;
+import kr.ac.tukorea.swh02.jumpstopgame.game.CollisionChecker;
 
 public class BaseScene {
+    private static final String TAG = BaseScene.class.getSimpleName();
     private static ArrayList<BaseScene> stack = new ArrayList<>();
     public static float frameTime;
     protected static Handler handler = new Handler();
@@ -108,6 +111,14 @@ public class BaseScene {
     }
     public <E extends Enum<E>> void add(E layerEnum, IGameObject gobj) {
         ArrayList<IGameObject> objects = layers.get(layerEnum.ordinal());
+
+//        for (ArrayList<IGameObject> objects: layers) {
+//            count += objects.size();
+//        }
+        if(layerEnum.ordinal() == 4) {
+            if(objects.size()>9)
+                return;
+        }
         objects.add(gobj);
     }
     public <E extends Enum> void remove(E layerEnum, IGameObject gobj, boolean immediate) {

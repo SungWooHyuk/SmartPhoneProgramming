@@ -21,9 +21,11 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
     private static final String TAG = Fly.class.getSimpleName();
     private Type type;
+    private int m_stage;
     private float speed, distance;
     public float px, py;
     public float angle;
+
     private boolean flip = false;
     protected Rect srcRect = new Rect();
     protected RectF collisionBox = new RectF();
@@ -35,12 +37,12 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
     public enum Type {
         boss, red, blue, cyan, dragon, COUNT, RANDOM;
     }
-    public static Fly get(Type type, float speed, float size, float px, float py) {
+    public static Fly get(Type type, float speed, float size, float px, float py ,int stage) {
         Fly fly = (Fly) RecycleBin.get(Fly.class);
         if (fly == null) {
             fly = new Fly();
         }
-        fly.init(type, speed, size, 3, py);
+        fly.init(type, speed, size, 3, py , stage);
         return fly;
     }
 
@@ -62,7 +64,7 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
     }
 
     private Rect[][] rects_array;
-    private void init(Type type, float speed, float size, float x, float y) {
+    private void init(Type type, float speed, float size, float x, float y , int stage) {
         this.type = type;
         this.speed = speed;
         this.width = this.height = size;
@@ -70,6 +72,7 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
         this.px = x;
         this.py = y;
         this.angle = 0.f;
+        this.m_stage = stage;
         srcRects = rects_array[type.ordinal()];
     }
 
@@ -81,8 +84,6 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
             px += speed * BaseScene.frameTime;
         else
             px -= speed * BaseScene.frameTime;
-        moveTo(px, y);
-        collisionBox.set(dstRect);
 
         if(px > 15.f) {
             flip = true;
@@ -92,6 +93,11 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
             flip = false;
             angle = 0.f;
         }
+
+        moveTo(px, y);
+        collisionBox.set(dstRect);
+
+
             //BaseScene.getTopScene().remove(MainScene.Layer.ENEMY, this);
     }
 

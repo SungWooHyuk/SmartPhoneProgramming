@@ -14,6 +14,18 @@ public class FlyGen implements IGameObject {
     private static final float GEN_INTERVAL = 1.0f;
     private Random rand = new Random();
     private float time;
+    private int m_stage;
+
+    public int GetStage()
+    {
+        return m_stage;
+    }
+
+    public void SetStage(int stage)
+    {
+        m_stage = stage;
+    }
+
 
     @Override
     public void update() {
@@ -34,7 +46,7 @@ public class FlyGen implements IGameObject {
 
         float size = rand.nextFloat() + 2;
         float speed = rand.nextFloat() * 0.5f + 3.0f;
-        Fly fly = Fly.get(Fly.Type.blue, speed, size, 3.f, y);
+        Fly fly = Fly.get(Fly.Type.blue, speed, size, 3.f, y , m_stage);
         fly.moveTo(fly.px, fly.py);
         MainScene scene = (MainScene) BaseScene.getTopScene();
         scene.add(MainScene.Layer.ENEMY, fly);
