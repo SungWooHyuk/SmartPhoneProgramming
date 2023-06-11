@@ -22,7 +22,9 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
     private static final String TAG = Fly.class.getSimpleName();
     private Type type;
     private float speed, distance;
-
+    public float px, py;
+    public float angle;
+    private boolean flip = false;
     protected Rect srcRect = new Rect();
     protected RectF collisionBox = new RectF();
     @Override
@@ -33,12 +35,12 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
     public enum Type {
         boss, red, blue, cyan, dragon, COUNT, RANDOM;
     }
-    public static Fly get(Type type, float speed, float size) {
+    public static Fly get(Type type, float speed, float size, float px, float py) {
         Fly fly = (Fly) RecycleBin.get(Fly.class);
         if (fly == null) {
             fly = new Fly();
         }
-        fly.init(type, speed, size);
+        fly.init(type, speed, size, 3, py);
         return fly;
     }
 
@@ -60,24 +62,49 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
     }
 
     private Rect[][] rects_array;
-    private void init(Type type, float speed, float size) {
+    private void init(Type type, float speed, float size, float x, float y) {
         this.type = type;
         this.speed = speed;
         this.width = this.height = size;
         this.distance = 0;
+        this.px = x;
+        this.py = y;
+        this.angle = 0.f;
         srcRects = rects_array[type.ordinal()];
     }
 
     @Override
     public void update() {
         super.update();
-        distance += speed * BaseScene.frameTime;
-        moveTo(distance, y);
+
+        if(!flip)
+            px += speed * BaseScene.frameTime;
+        else
+            px -= speed * BaseScene.frameTime;
+        moveTo(px, y);
         collisionBox.set(dstRect);
+
+        if(px > 15.f) {
+            flip = true;
+            angle = 180.f;
+        }
+        if(px < 3.f) {
+            flip = false;
+            angle = 0.f;
+        }
+            //BaseScene.getTopScene().remove(MainScene.Layer.ENEMY, this);
     }
 
     @Override
     public void onRecycle() {
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        canvas.save();
+        canvas.rotate(angle, x, y);
+        super.draw(canvas);
+        canvas.restore();
     }
 
 

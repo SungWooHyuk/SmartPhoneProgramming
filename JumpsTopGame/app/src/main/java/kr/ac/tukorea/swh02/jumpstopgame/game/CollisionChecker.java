@@ -20,7 +20,6 @@ public class CollisionChecker implements IGameObject {
     public void update() {
         MainScene scene = (MainScene) BaseScene.getTopScene();
         ArrayList<IGameObject> enemys = scene.getObjectsAt(MainScene.Layer.ENEMY);
-        Log.d(TAG, "collsion:" + player.getCollisionRect().top);
         for (int i = enemys.size() - 1; i >= 0; i--) {
             IGameObject gobj = enemys.get(i);
             if (!(gobj instanceof Fly)) {
