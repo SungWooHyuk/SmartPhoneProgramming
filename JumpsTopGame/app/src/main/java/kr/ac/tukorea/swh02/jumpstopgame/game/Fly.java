@@ -97,12 +97,16 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
         moveTo(px, y);
         collisionBox.set(dstRect);
 
-
-            //BaseScene.getTopScene().remove(MainScene.Layer.ENEMY, this);
+        //if(!MainScene.LevelCollisionCheck)
+         //   BaseScene.getTopScene().remove(MainScene.Layer.ENEMY, this);
     }
 
     @Override
     public void onRecycle() {
+    }
+
+    public int getScore() {
+        return 10 * m_stage;
     }
 
     @Override

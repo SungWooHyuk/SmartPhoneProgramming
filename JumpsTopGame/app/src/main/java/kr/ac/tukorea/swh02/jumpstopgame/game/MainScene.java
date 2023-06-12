@@ -1,7 +1,12 @@
 package kr.ac.tukorea.swh02.jumpstopgame.game;
 
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
+
+import java.util.Random;
+import java.util.logging.Level;
 
 import kr.ac.tukorea.swh02.jumpstopgame.R;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.Button;
@@ -20,13 +25,42 @@ public class MainScene extends BaseScene {
         return singleton;
     }
     public enum Layer {
-        BG, ENEMY, WALL, PLAYER, GROUND, TOUCH, controller,  COUNT
+        BG, ENEMY, WALL, PLAYER, GROUND, TOUCH, ui, controller,  COUNT
     }
+    private Score score;
+    private Score timer;
+    private FlyGen flygen;
+    private Handler handler;
+    private long startTime;
+    public static int currentLevel = 1;
+
+    public static int getCurrentLevel()
+    {
+        return currentLevel;
+    }
+    private Random rand = new Random();
+    public static boolean LevelCollisionCheck = true;
+    public static boolean MainSceneGo = true;
+    public void setCurrentLevel(int lv)
+    {
+        currentLevel = lv;
+    }
+
+    public static int elapsedtime;
     public float size(float unit) {
         return Metrics.getGameHeight() / 9.5f * unit;
     }
     public float pos(float unit) {
         return unit;
+    }
+    public void addScore(int amount) {
+        score.add(amount);
+    }
+
+    private Wall leftwall;
+    private Wall rightwall;
+    public int getScore() {
+        return score.getScore();
     }
     public MainScene() {
         Metrics.setGameSize(18.0f, 32.0f);
@@ -38,12 +72,18 @@ public class MainScene extends BaseScene {
         ck = new CollisionChecker(playerRed);
 
         add(Layer.BG, new BackGround(R.mipmap.bg, 1.0f));
-        add(Layer.WALL, new Wall(R.mipmap.leftwall, 1.0f, 0));
-        add(Layer.WALL, new Wall(R.mipmap.rightwall, 1.0f, 1));
-
+        leftwall = new Wall(R.mipmap.leftwall, 1.0f, 0);
+        rightwall = new Wall(R.mipmap.rightwall, 1.0f, 1);
+        add(Layer.WALL, leftwall);
+        add(Layer.WALL, rightwall);
+        score = new Score(0);
+        timer = new Score(1);
+        flygen = new FlyGen();
+        add(Layer.ui, score);
+        add(Layer.ui, timer);
         add(Layer.GROUND, new Ground(R.mipmap.ground));
         add(Layer.PLAYER, playerRed);
-        add(Layer.controller, new FlyGen());
+        add(Layer.controller, flygen);
 
 
         add(Layer.TOUCH, new Button(R.mipmap.jumpbutton, 4.f, 29.f, 3.5f, 3.5f, new Button.Callback() {
@@ -98,5 +138,49 @@ public class MainScene extends BaseScene {
     @Override
     protected void onStart() {
         super.onStart();
+        handler = new Handler();
+        startTime = SystemClock.elapsedRealtime();
+        handler.post(updateTimerRunnable);
     }
+    int num = 0;
+    int threetimecheck = 0;
+    public static boolean b_threetimecheck = true;
+    private boolean MainGo = false;
+    int randomNumber = rand.nextInt(10) + 1;
+    private Runnable updateTimerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            long currentTime = SystemClock.elapsedRealtime();
+            long realelapsedtime = (currentTime - startTime) / 1000;
+            num++;
+            elapsedtime = (int) realelapsedtime;
+            timer.timeadd(elapsedtime);
+            handler.postDelayed(this, 1000);
+
+            if (LevelCollisionCheck) {
+                if (num >= 5) {
+                    LevelCollisionCheck = false;
+                    b_threetimecheck = false;
+                }
+            }
+
+            if (leftwall.CenterCheck() && rightwall.CenterCheck() && !LevelCollisionCheck) {
+                threetimecheck++;
+                if (threetimecheck > 3) {
+                    b_threetimecheck = true;
+                    MainGo = true;
+                    threetimecheck = 0;
+                }
+            }
+
+            if (MainGo && leftwall.OriginalCheck() && rightwall.OriginalCheck() && !LevelCollisionCheck)
+            {
+                num = 0;
+                flygen.SetStage(flygen.GetStage() + 1);
+                setCurrentLevel(flygen.GetStage());
+                LevelCollisionCheck = true;
+                MainGo = false;
+            }
+        }
+    };
 }

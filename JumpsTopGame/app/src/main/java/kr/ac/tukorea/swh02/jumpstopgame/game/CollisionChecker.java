@@ -27,7 +27,7 @@ public class CollisionChecker implements IGameObject {
             }
             Fly enemy = (Fly) gobj;
             if (CollisionHelper.collides(player, enemy)) {
-
+                scene.addScore(enemy.getScore());
                 scene.remove(MainScene.Layer.ENEMY, gobj);
                 //Sound.playEffect(item.soundId());
             }

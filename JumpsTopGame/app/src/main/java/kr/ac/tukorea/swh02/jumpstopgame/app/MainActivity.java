@@ -2,6 +2,9 @@ package kr.ac.tukorea.swh02.jumpstopgame.app;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -10,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.GameView;
 import kr.ac.tukorea.swh02.jumpstopgame.game.MainScene;
+import kr.ac.tukorea.swh02.jumpstopgame.game.Score;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
+
         gameView = new GameView(this);
         gameView.setFullScreen();
         setContentView(gameView);
@@ -53,4 +58,6 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onBackPressed();
     }
+
+
 }
