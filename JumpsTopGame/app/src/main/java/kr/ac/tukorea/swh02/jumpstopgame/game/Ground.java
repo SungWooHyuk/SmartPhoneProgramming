@@ -26,7 +26,7 @@ public class Ground extends Sprite {
     }
     @Override
     public void draw(Canvas canvas) {
-        dstRect.set(2.f, 32.f - height, 18.f, 28.f );
+        dstRect.set(0.f, Metrics.game_height - height, Metrics.game_width + Metrics.game_width / 6.f, Metrics.game_height - Metrics.game_height/8.f );
         canvas.drawBitmap(bitmap, null, dstRect, null);
     }
 

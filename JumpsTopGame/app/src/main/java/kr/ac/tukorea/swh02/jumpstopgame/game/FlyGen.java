@@ -39,14 +39,15 @@ public class FlyGen implements IGameObject {
     private void spawn() {
         float y = rand.nextFloat() * Metrics.game_height;
 
-        while(y >20.f)
+        while(y > Metrics.game_height / 1.6f)
         {
             y = rand.nextFloat() * Metrics.game_height;
         }
 
-        float size = rand.nextFloat() + 2;
-        float speed = rand.nextFloat() * 0.5f + 3.0f;
-        Fly fly = Fly.get(Fly.Type.blue, speed, size, 3.f, y , m_stage);
+        float size = rand.nextFloat() + 3.f;
+        float speed = 0.5f*100.f + 3.0f;
+        Log.d(TAG,"Time" + speed);
+        Fly fly = Fly.get(Fly.Type.blue, speed, size, 0.f, y , m_stage);
         fly.moveTo(fly.px, fly.py);
         MainScene scene = (MainScene) BaseScene.getTopScene();
         scene.add(MainScene.Layer.ENEMY, fly);

@@ -2,6 +2,7 @@ package kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects;
 
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.ITouchable;
@@ -37,8 +38,10 @@ public class Button extends Sprite implements ITouchable {
         int action = e.getAction();
         if (action == MotionEvent.ACTION_DOWN) {
             callback.onTouch(Action.pressed);
+            Log.d(TAG, "hello" );
         } else if (action == MotionEvent.ACTION_UP) {
             callback.onTouch(Action.released);
+            Log.d(TAG, "Bye" );
         }
         return true;
     }

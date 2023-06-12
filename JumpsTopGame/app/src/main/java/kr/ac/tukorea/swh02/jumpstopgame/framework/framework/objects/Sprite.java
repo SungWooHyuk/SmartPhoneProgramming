@@ -22,7 +22,6 @@ public class Sprite implements IGameObject {
             setBitmapResource(bitmapResId);
         }
         fixDstRect();
-
         Log.v(TAG, "Created " + this.getClass().getSimpleName() + "@" + System.identityHashCode(this));
     }
 
@@ -75,5 +74,9 @@ public class Sprite implements IGameObject {
         this.x = x;
         this.y = y;
         fixDstRect();
+    }
+    public void moveToWithoutFixDstRect(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 }

@@ -115,7 +115,7 @@ public class BaseScene {
 //        for (ArrayList<IGameObject> objects: layers) {
 //            count += objects.size();
 //        }
-        if(layerEnum.ordinal() == 4) {
+        if(layerEnum.ordinal() == 5) {
             if(objects.size()>9)
                 return;
         }

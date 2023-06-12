@@ -20,7 +20,7 @@ public class MainScene extends BaseScene {
         return singleton;
     }
     public enum Layer {
-        BG, PLAYER, GROUND, TOUCH, ENEMY, controller, COUNT
+        BG, ENEMY, WALL, PLAYER, GROUND, TOUCH, controller,  COUNT
     }
     public float size(float unit) {
         return Metrics.getGameHeight() / 9.5f * unit;
@@ -36,15 +36,30 @@ public class MainScene extends BaseScene {
                 size(1*0.9f), size(1 * 0.9f), Player.PlayerType.Red
         );
         ck = new CollisionChecker(playerRed);
-        add(Layer.BG, new BackGround(R.mipmap.background, 1.0f));
+
+        add(Layer.BG, new BackGround(R.mipmap.bg, 1.0f));
+        add(Layer.WALL, new Wall(R.mipmap.leftwall, 1.0f, 0));
+        add(Layer.WALL, new Wall(R.mipmap.rightwall, 1.0f, 1));
+
         add(Layer.GROUND, new Ground(R.mipmap.ground));
         add(Layer.PLAYER, playerRed);
+        add(Layer.controller, new FlyGen());
+
 
         add(Layer.TOUCH, new Button(R.mipmap.jumpbutton, 4.f, 29.f, 3.5f, 3.5f, new Button.Callback() {
             @Override
             public boolean onTouch(Button.Action action) {
                 if (action == Button.Action.pressed) {
-                    playerRed.jump();
+                    if(playerRed.IsJumpState())
+                        playerRed.JumpTimeFlip(true);
+                }
+                else if (action == Button.Action.released)
+                {
+                    if(playerRed.IsJumpState())
+                    {
+                        playerRed.JumpTimeFlip(false);
+                        playerRed.jump();
+                    }
                 }
                 return true;
             }
@@ -73,7 +88,7 @@ public class MainScene extends BaseScene {
             }
         }));
 
-        add(Layer.controller, new FlyGen());
+
         add(Layer.controller, ck);
     }
 

@@ -85,7 +85,7 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
         else
             px -= speed * BaseScene.frameTime;
 
-        if(px > 15.f) {
+        if(px > 17.f) {
             flip = true;
             angle = 180.f;
         }

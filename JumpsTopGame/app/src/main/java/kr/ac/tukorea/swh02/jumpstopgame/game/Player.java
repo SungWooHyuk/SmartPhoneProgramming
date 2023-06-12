@@ -20,18 +20,22 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.Sprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.res.BitmapPool;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.RecycleBin;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.util.Gauge;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
 public class Player extends PlayerSheetSprite implements IBoxCollidable{
     private static final float FRAMES_PER_SECOND = 8.f;
     private static final String TAG = Player.class.getSimpleName();
     //private  CollisionChecker collisionChecker = new CollisionChecker(this);
+    private static Gauge gauge;
+    private float jumpgauge = 0.f, maxjumpgauge = 3.f;
     private Ground ground;
-    private final float jumpPower;
+    private float jumpPower;
     private final float gravity;
     private float save_pos_x;
     private  float save_pos_y;
-
+    private float currentTime = 0.f;
+    private boolean timecheck = false;
     static {
         State.initRects();
     }
@@ -123,13 +127,12 @@ public class Player extends PlayerSheetSprite implements IBoxCollidable{
         super(type.playerBitmap(type), FRAMES_PER_SECOND * 4);
         this.x = x;
         this.y = y;
-        m_w =w/1.5f;
-        m_h = h/1.5f;
+        m_w =w / 1.5f;
+        m_h = h / 1.5f;
         save_pos_x = x;
         save_pos_y = y;
-        jumpPower = 30.f;
         moveSpeed = 4.f;
-        gravity = 20.8f;
+        gravity = Metrics.game_height / 1.6f;
         setDstRect(w/1.5f, h/1.5f);
         setState(State.falling);
         SetBitmapflipSize(32);
@@ -153,7 +156,23 @@ public class Player extends PlayerSheetSprite implements IBoxCollidable{
     private Rect[][] rects_array;
 
     public void update() {
+
         super.update();
+        //currentTime += BaseScene.frameTime;
+
+
+        if(timecheck)
+        {
+            currentTime += BaseScene.frameTime;
+
+            jumpgauge = (currentTime % 3.f);
+            jumpPower = (Metrics.game_height/3.f)*jumpgauge;
+        }
+        else
+        {
+            jumpPower = 0.f;
+        }
+
         switch (state)
         {
             case falling:
@@ -221,33 +240,6 @@ public class Player extends PlayerSheetSprite implements IBoxCollidable{
                 break;
         }
     }
-    private float findNearestPlatformTop() {
-        return ground.getCollisionRect().top;
-    }
-
-    private Ground findNearestPlatform(float foot) {
-        Ground nearest = null;
-        MainScene scene = (MainScene) BaseScene.getTopScene();
-        ArrayList<IGameObject> platforms = scene.getObjectsAt(MainScene.Layer.GROUND);
-        float top = Metrics.game_height - (bitmap.getHeight() * Metrics.game_width / bitmap.getWidth());
-        for (IGameObject obj: platforms) {
-            Ground platform = (Ground) obj;
-            RectF rect = platform.getCollisionRect();
-            if (rect.left > x || x > rect.right) {
-                continue;
-            }
-            //Log.d(TAG, "foot:" + foot + " platform: " + rect);
-            if (rect.top < foot) {
-                continue;
-            }
-            if (top > rect.top) {
-                top = rect.top;
-                nearest = platform;
-            }
-            //Log.d(TAG, "top=" + top + " gotcha:" + platform);
-        }
-        return nearest;
-    }
     public void setmovedir(int dir, boolean movestop)
     {
         if(dir == 0){
@@ -302,7 +294,15 @@ public class Player extends PlayerSheetSprite implements IBoxCollidable{
         collisionBox.set(dstRect);
         state.applyInsets(collisionBox);
     }
-
+    public boolean IsJumpState()
+    {
+        this.state = state;
+        if (state== State.idle)
+        {
+           return true;
+        }
+        return false;
+    }
     public void jump() {
         if (state == State.idle) {
             setState(State.falling);
@@ -320,5 +320,26 @@ public class Player extends PlayerSheetSprite implements IBoxCollidable{
         }
     }
 
+    public void draw(Canvas canvas) {
+        canvas.save();
+        super.draw(canvas);
+        canvas.restore();
+        if (gauge == null) {
+            gauge = new Gauge(0.2f, R.color.flyHealthFg, R.color.flyHealthBg);
+        }
+        gauge.draw(canvas, x - m_w / 2, y - m_h / 2 , 2.f, jumpgauge/maxjumpgauge);
+
+    }
+
+    public void JumpTimeFlip(boolean check) {
+        this.state = state;
+       if(!timecheck && state==State.idle && check)
+           timecheck = true;
+       else {
+           jumpgauge = 0.f;
+           currentTime = 0.f;
+           timecheck = false;
+       }
+    }
 }
 
