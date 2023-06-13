@@ -189,3 +189,9 @@
 
 1. 이번 수업에서 클래스의 구조에 대해서 다시 공부할 수 있어서 배운점이 많았습니다.
 2. 깃 커밋위주의 수업도 장점이 많고 좋지만, 직접 코드를 따라치는 타이핑의 수업이 기억과 이해에 더 도움이 될것같습니다.
+
+---- -
+
+## 발표링크
+
+<[https://www.youtube.com/watch?v=vaGyfltpKq8](https://youtu.be/lE8H6Rffglk)https://youtu.be/lE8H6Rffglk>
