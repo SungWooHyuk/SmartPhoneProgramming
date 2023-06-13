@@ -125,10 +125,14 @@
 
 
 - 안전 구역 미생성
+
+
 ![idle](https://github.com/SungWooHyuk/SmartPhoneProgramming/assets/94315575/6ff5e5f5-895c-4211-b036-ea0f961f97c9)
 
 
 - 안전 구역 생성
+
+
 ![safe](https://github.com/SungWooHyuk/SmartPhoneProgramming/assets/94315575/a532d9f3-f1df-4d36-9b02-b2e8a5e7c1f4)
 
 
