@@ -6,6 +6,17 @@ android {
     namespace 'kr.ac.tukorea.swh02.jumpstopgame'
     compileSdk 33
 
+    viewBinding {
+        enabled = true
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    buildFeatures {
+        dataBinding true
+    }
     defaultConfig {
         applicationId "kr.ac.tukorea.swh02.jumpstopgame"
         minSdk 22

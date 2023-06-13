@@ -1,21 +1,22 @@
 package kr.ac.tukorea.swh02.jumpstopgame.app;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import kr.ac.tukorea.swh02.jumpstopgame.R;
 import kr.ac.tukorea.swh02.jumpstopgame.databinding.ActivityMainBinding;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.res.Sound;
 
-public class TitleActivity extends AppCompatActivity {
-    private static final String TAG = TitleActivity.class.getSimpleName();
+public class RankActivitiy extends AppCompatActivity {
+    private static final String TAG = RankActivitiy.class.getSimpleName();
     private ActivityMainBinding binding;
     private ValueAnimator animator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +51,6 @@ public class TitleActivity extends AppCompatActivity {
         animator.end();
     }
     public void onBtnStart(View view) {
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, TitleActivity.class));
     }
 }

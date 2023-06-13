@@ -25,7 +25,8 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
     private float speed, distance;
     public float px, py;
     public float angle;
-
+    public boolean GoldMonster = false;
+    private static Random random = new Random();
     private boolean flip = false;
     protected Rect srcRect = new Rect();
     protected RectF collisionBox = new RectF();
@@ -36,6 +37,15 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
 
     public enum Type {
         boss, red, blue, cyan, dragon, COUNT, RANDOM;
+
+        static int[] POSSIBILITIES = { 0, 10, 20, 30, 40 };
+        static int POSSIBILITY_SUM;
+        static {
+            POSSIBILITY_SUM = 0;
+            for (int p : POSSIBILITIES) {
+                POSSIBILITY_SUM += p;
+            }
+        }
     }
     public static Fly get(Type type, float speed, float size, float px, float py ,int stage) {
         Fly fly = (Fly) RecycleBin.get(Fly.class);
@@ -65,7 +75,23 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
 
     private Rect[][] rects_array;
     private void init(Type type, float speed, float size, float x, float y , int stage) {
+        if (type == Type.RANDOM) {
+            int value = random.nextInt(Type.POSSIBILITY_SUM);
+            for (int i = 0; i < Type.POSSIBILITIES.length; i++) {
+                value -= Type.POSSIBILITIES[i];
+                if (value < 0) {
+                    type = Type.values()[i];
+                    break;
+                }
+            }
+        }
         this.type = type;
+
+        if(type == Type.boss)
+        {
+            this.GoldMonster = true;
+        }
+
         this.speed = speed;
         this.width = this.height = size;
         this.distance = 0;
@@ -97,8 +123,8 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
         moveTo(px, y);
         collisionBox.set(dstRect);
 
-        //if(!MainScene.LevelCollisionCheck)
-         //   BaseScene.getTopScene().remove(MainScene.Layer.ENEMY, this);
+        if(!MainScene.LevelCollisionCheck)
+            BaseScene.getTopScene().remove(MainScene.Layer.ENEMY, this);
     }
 
     @Override
@@ -108,7 +134,8 @@ public class Fly extends SheetSprite implements IRecyclable, IBoxCollidable {
     public int getScore() {
         return 10 * m_stage;
     }
-
+    public Type getType() { return type;}
+    public Type getCType() {return Type.boss;}
     @Override
     public void draw(Canvas canvas) {
         canvas.save();

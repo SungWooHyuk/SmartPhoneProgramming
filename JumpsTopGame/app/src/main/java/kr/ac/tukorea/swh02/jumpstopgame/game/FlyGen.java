@@ -49,13 +49,22 @@ public class FlyGen implements IGameObject {
         float size = rand.nextFloat() + (3.f / m_stage) + 1;
         float speed = m_stage*3.f + 5.0f;
         SetStage(m_stage);
-        Fly fly = Fly.get(Fly.Type.blue, speed, size, 0.f, y , m_stage);
-        fly.moveTo(fly.px, fly.py);
-        MainScene scene = (MainScene) BaseScene.getTopScene();
-        //if(MainScene.LevelCollisionCheck)
-            scene.add(MainScene.Layer.ENEMY, fly);
-        //else
-          //  scene.remove(MainScene.Layer.ENEMY, fly);
+        int boss = rand.nextInt(10);
+        if(boss == 5)
+        {
+            Fly fly = Fly.get(Fly.Type.boss, speed, size, 0.f, y , m_stage);
+            fly.moveTo(fly.px, fly.py);
+            MainScene scene = (MainScene) BaseScene.getTopScene();
+            if(MainScene.LevelCollisionCheck)
+                scene.add(MainScene.Layer.ENEMY, fly);
+        }
+        else {
+            Fly fly = Fly.get(Fly.Type.RANDOM, speed, size, 0.f, y, m_stage);
+            fly.moveTo(fly.px, fly.py);
+            MainScene scene = (MainScene) BaseScene.getTopScene();
+            if(MainScene.LevelCollisionCheck)
+                scene.add(MainScene.Layer.ENEMY, fly);
+        }
     }
 
     @Override

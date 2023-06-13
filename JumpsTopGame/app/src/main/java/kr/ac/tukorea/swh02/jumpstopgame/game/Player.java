@@ -39,7 +39,23 @@ public class Player extends PlayerSheetSprite implements IBoxCollidable{
     static {
         State.initRects();
     }
+    private PlayerType p_type;
 
+    public void change_ptype()
+    {
+        if(p_type == PlayerType.Red)
+            p_type = PlayerType.Blue;
+        else
+            p_type = PlayerType.Red;
+    }
+    public PlayerType currentplayertype()
+    {
+        return p_type;
+    }
+    public PlayerType blueplayer()
+    {
+        return PlayerType.Blue;
+    }
     @Override
     public RectF getCollisionRect() {
         return collisionBox;
@@ -55,7 +71,7 @@ public class Player extends PlayerSheetSprite implements IBoxCollidable{
                 return R.mipmap.frog_idle;
             }
             else if(type == PlayerType.Blue){
-                return R.mipmap.frog_idle;
+                return R.mipmap.frog_idle2;
             }
             return  0;
         }
@@ -119,7 +135,6 @@ public class Player extends PlayerSheetSprite implements IBoxCollidable{
     public movestate movedir;
     private  float m_w;
     private  float m_h;
-    private PlayerType p_type;
     protected static RectF collisionBox = new RectF();
 
     public Player(float x, float y, float w, float h, PlayerType type ) {
@@ -141,7 +156,15 @@ public class Player extends PlayerSheetSprite implements IBoxCollidable{
     public RectF getBoundingRect() {
         return collisionBox;
     }
-
+    private static boolean mysafe;
+    public static void setSafe(boolean safe)
+    {
+       mysafe = safe;
+    }
+    public boolean getSafe()
+    {
+        return mysafe;
+    }
     public void InitPlayer()
     {
         this.x = save_pos_x;
@@ -275,19 +298,35 @@ public class Player extends PlayerSheetSprite implements IBoxCollidable{
         this.state = state;
         if (state== State.jump)
         {
-            ChangeBitmap(R.mipmap.frog_jump);
+            if(p_type == PlayerType.Red)
+                ChangeBitmap(R.mipmap.frog_jump);
+            else if (p_type == PlayerType.Blue){
+                ChangeBitmap(R.mipmap.frog_jump2);
+            }
         }
         if (state== State.run)
         {
-            ChangeBitmap(R.mipmap.frog_move);
+            if(p_type == PlayerType.Red)
+                ChangeBitmap(R.mipmap.frog_move);
+            else if (p_type == PlayerType.Blue){
+                ChangeBitmap(R.mipmap.frog_move2);
+            }
         }
         if (state== State.idle)
         {
-            ChangeBitmap(R.mipmap.frog_idle);
+            if(p_type == PlayerType.Red)
+                ChangeBitmap(R.mipmap.frog_idle);
+            else if (p_type == PlayerType.Blue){
+                ChangeBitmap(R.mipmap.frog_idle2);
+            }
         }
         if (state== State.falling)
         {
-            ChangeBitmap(R.mipmap.frog_fall);
+            if(p_type == PlayerType.Red)
+                ChangeBitmap(R.mipmap.frog_fall);
+            else if (p_type == PlayerType.Blue){
+                ChangeBitmap(R.mipmap.frog_fall2);
+            }
         }
 
         srcRects = state.srcRects();

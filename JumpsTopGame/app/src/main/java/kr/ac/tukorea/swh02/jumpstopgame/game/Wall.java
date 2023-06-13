@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.Log;
 
+import java.util.Random;
+
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.interfaces.IBoxCollidable;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.Sprite;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
@@ -12,6 +14,7 @@ import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 public class Wall extends Sprite {
     private static final String TAG = Wall.class.getSimpleName();
     private final float speed;
+
     private FlyGen flyGen = new FlyGen();
     private final float height;
     private float scroll;
@@ -57,9 +60,18 @@ public class Wall extends Sprite {
         return originalOK;
     }
     int whiling = 0;
-    @Override
+    private Random rand = new Random();
+    public void ShowSafeBox()
+    {
+        MainScene scene = (MainScene) BaseScene.getTopScene();
+        int lv =  MainScene.getCurrentLevel();
+        int rx = rand.nextInt(10)+ (int)(Metrics.game_width / 4);
+        int ry = rand.nextInt(15)+ (int)(Metrics.game_height / 10);
+        SafeBox safebox = SafeBox.get(rx, ry, lv);
+        BaseScene.getTopScene().add(MainScene.Layer.SBOX, safebox);
+    }
+
     public void update() {
-        Log.d(TAG,"stage"+ MainScene.getCurrentLevel());
         if (!MainScene.LevelCollisionCheck) {
             originalOK = false;
             if (m_num == 0) // left
@@ -76,7 +88,7 @@ public class Wall extends Sprite {
                     }
                     else {
 
-                        m_startX += (speed * MainScene.getCurrentLevel() * BaseScene.frameTime);
+                        m_startX += (speed * (2+(MainScene.getCurrentLevel()*0.1)) * BaseScene.frameTime);
                         bshake = false;
                     }
                 }
@@ -86,7 +98,7 @@ public class Wall extends Sprite {
                         centerOk = false;
                         originalOK = true;
                     } else {
-                        m_startX += -(speed * 10 * BaseScene.frameTime);
+                        m_startX += -(speed * 5 * BaseScene.frameTime);
                         centerOk = false;
                     }
                 }
@@ -99,12 +111,12 @@ public class Wall extends Sprite {
                 } else {
                     if(bshake2){
                         m_startX += speed * 0.5 * BaseScene.frameTime;
-                        if(m_startX >= 8.2f)
+                        if(m_startX >= 8.1f)
                             bshake2 = false;
                     }
                     else
                     {
-                        m_startX -= speed * MainScene.getCurrentLevel() * BaseScene.frameTime;
+                        m_startX -= speed * (2+(MainScene.getCurrentLevel()*0.1)) * BaseScene.frameTime;
                         bshake2 = false;
                     }
                 }
@@ -114,7 +126,7 @@ public class Wall extends Sprite {
                         centerOk = false;
                         originalOK = true;
                     } else {
-                        m_startX += (speed * 10 * BaseScene.frameTime);
+                        m_startX += (speed * 8 * BaseScene.frameTime);
                         centerOk = false;
                     }
                 }

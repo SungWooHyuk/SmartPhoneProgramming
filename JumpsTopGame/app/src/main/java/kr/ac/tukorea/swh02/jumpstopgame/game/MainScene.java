@@ -1,5 +1,7 @@
 package kr.ac.tukorea.swh02.jumpstopgame.game;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
@@ -9,12 +11,17 @@ import java.util.Random;
 import java.util.logging.Level;
 
 import kr.ac.tukorea.swh02.jumpstopgame.R;
+import kr.ac.tukorea.swh02.jumpstopgame.app.MainActivity;
+import kr.ac.tukorea.swh02.jumpstopgame.app.RankActivitiy;
+import kr.ac.tukorea.swh02.jumpstopgame.app.TitleActivity;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.objects.Button;
+import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.res.Sound;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.scene.BaseScene;
 import kr.ac.tukorea.swh02.jumpstopgame.framework.framework.view.Metrics;
 
 public class MainScene extends BaseScene {
     private static final String TAG = MainScene.class.getSimpleName();
+    private MainActivity activity;
     private Player playerRed;
     private CollisionChecker ck;
     private static MainScene singleton;
@@ -24,13 +31,22 @@ public class MainScene extends BaseScene {
         }
         return singleton;
     }
+
+    public MainScene(MainActivity activity) {
+        this.activity = activity;
+    }
+    public void switchToRankActivity() {
+        Intent intent = new Intent(activity, RankActivitiy.class);
+        activity.startActivity(intent);
+    }
     public enum Layer {
-        BG, ENEMY, WALL, PLAYER, GROUND, TOUCH, ui, controller,  COUNT
+        BG, ENEMY, WALL, SBOX, PLAYER, GROUND, TOUCH, ui, controller,  COUNT
     }
     private Score score;
     private Score timer;
     private FlyGen flygen;
     private Handler handler;
+    private SafeBox safebox;
     private long startTime;
     public static int currentLevel = 1;
 
@@ -100,6 +116,7 @@ public class MainScene extends BaseScene {
                         playerRed.JumpTimeFlip(false);
                         playerRed.jump();
                     }
+                    //Sound.playMusic(R.raw.jump);
                 }
                 return true;
             }
@@ -128,7 +145,6 @@ public class MainScene extends BaseScene {
             }
         }));
 
-
         add(Layer.controller, ck);
     }
 
@@ -138,15 +154,26 @@ public class MainScene extends BaseScene {
     @Override
     protected void onStart() {
         super.onStart();
+        Sound.playMusic(R.raw.jumpstop);
+        Sound.playEffect(R.raw.wall);
+        Sound.playEffect(R.raw.jump);
         handler = new Handler();
         startTime = SystemClock.elapsedRealtime();
         handler.post(updateTimerRunnable);
     }
+
+    @Override
+    protected void onEnd() {
+        super.onEnd();
+        Sound.stopMusic();
+    }
+
     int num = 0;
     int threetimecheck = 0;
     public static boolean b_threetimecheck = true;
     private boolean MainGo = false;
-    int randomNumber = rand.nextInt(10) + 1;
+    int randomNumber = rand.nextInt(10)+5;
+    boolean currentOK = false;
     private Runnable updateTimerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -158,28 +185,43 @@ public class MainScene extends BaseScene {
             handler.postDelayed(this, 1000);
 
             if (LevelCollisionCheck) {
-                if (num >= 5) {
+                if (num >= randomNumber) {
+                    Sound.playEffect(R.raw.wall);
                     LevelCollisionCheck = false;
                     b_threetimecheck = false;
+                    rightwall.ShowSafeBox();
                 }
             }
 
             if (leftwall.CenterCheck() && rightwall.CenterCheck() && !LevelCollisionCheck) {
+
+                if(!playerRed.getSafe()) {
+                    if (playerRed.currentplayertype() == playerRed.blueplayer() && !currentOK) {
+                        playerRed.change_ptype();
+                        currentOK = true;
+                    } else {
+                        if (!currentOK) {
+                            popAll();
+                        }
+                    }
+                }
                 threetimecheck++;
                 if (threetimecheck > 3) {
                     b_threetimecheck = true;
                     MainGo = true;
                     threetimecheck = 0;
+                    currentOK = false;
                 }
             }
 
-            if (MainGo && leftwall.OriginalCheck() && rightwall.OriginalCheck() && !LevelCollisionCheck)
-            {
-                num = 0;
-                flygen.SetStage(flygen.GetStage() + 1);
-                setCurrentLevel(flygen.GetStage());
-                LevelCollisionCheck = true;
-                MainGo = false;
+            if (MainGo && leftwall.OriginalCheck() && !LevelCollisionCheck) {
+
+                    num = 0;
+                    flygen.SetStage(flygen.GetStage() + 1);
+                    setCurrentLevel(flygen.GetStage());
+                    LevelCollisionCheck = true;
+                    MainGo = false;
+
             }
         }
     };

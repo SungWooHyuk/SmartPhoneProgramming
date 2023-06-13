@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@mipmap/background"
+    android:background="@mipmap/square"
     tools:context=".app.TitleActivity">
 
     <LinearLayout
@@ -29,17 +29,17 @@
             android:background="@drawable/title_round_bg"
             android:gravity="center"
             android:padding="20dp"
-            android:text="Jumps Top"
             android:textColor="@color/flyHealthFg"
             android:textSize="50sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:id="@+id/scoreTextView" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:onClick="onBtnStart"
-            android:text="Start Game"
+            android:text="Go Title"
             android:textAlignment="center"
             android:textColor="@color/flyHealthFg"
             android:textSize="30sp" />
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Highscore"
+            android:text="Quit"
             android:textColor="@color/flyHealthFg"
             android:textSize="30sp" />
     </LinearLayout>

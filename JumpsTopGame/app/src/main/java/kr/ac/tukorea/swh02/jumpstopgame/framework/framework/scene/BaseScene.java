@@ -37,6 +37,7 @@ public class BaseScene {
             BaseScene scene = getTopScene();
             scene.popScene();
         }
+
     }
     protected ArrayList<ArrayList<IGameObject>> layers = new ArrayList<>();
     public int changeScene() {
@@ -180,21 +181,21 @@ public class BaseScene {
             }
         }
 
-        if (BuildConfig.DEBUG) {
-            if (bboxPaint == null) {
-                bboxPaint = new Paint();
-                bboxPaint.setStyle(Paint.Style.STROKE);
-                bboxPaint.setColor(Color.RED);
-            }
-            for (ArrayList<IGameObject> objects: layers) {
-                for (IGameObject gobj : objects) {
-                    if (gobj instanceof IBoxCollidable) {
-                        RectF rect = ((IBoxCollidable) gobj).getCollisionRect();
-                        canvas.drawRect(rect, bboxPaint);
-                    }
-                }
-            }
-        }
+//        if (BuildConfig.DEBUG) {
+//            if (bboxPaint == null) {
+//                bboxPaint = new Paint();
+//                bboxPaint.setStyle(Paint.Style.STROKE);
+//                bboxPaint.setColor(Color.BLUE);
+//            }
+//            for (ArrayList<IGameObject> objects: layers) {
+//                for (IGameObject gobj : objects) {
+//                    if (gobj instanceof IBoxCollidable) {
+//                        RectF rect = ((IBoxCollidable) gobj).getCollisionRect();
+//                        canvas.drawRect(rect, bboxPaint);
+//                    }
+//                }
+//            }
+//        }
     }
 
 
