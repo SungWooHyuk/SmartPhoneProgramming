@@ -128,11 +128,11 @@
 
 ![커밋기록](https://github.com/SungWooHyuk/SmartPhoneProgramming/assets/94315575/0a8d44da-e233-43e2-a3ca-cd51d2ad537a)
 
-3~4월 - 9회
-5월 - 11회
-6월 - 6회
+- 3~4월 - 9회
+- 5월 - 11회
+- 6월 - 6회
 
-총 커밋횟수 26회
+- 총 커밋횟수 26회
 
 ---- -
 ## 목표가 변경된 내용과 이유
